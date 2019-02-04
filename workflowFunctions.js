@@ -214,7 +214,7 @@ function getStockType(sheetName) {
     }
 		return stockType
 }
-
+//get Total Versions in Job
 function getTotalVersions(versionList) {
     var totalVersions = versionList.length
 
