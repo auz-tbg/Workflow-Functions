@@ -20,7 +20,7 @@ function getPress(device) {
     if (device == "158") press = "Cutter 3";
     if (device == "159") press = "Cutter 4";
     if (device == "385") press = "MC";
-
+//hello there
     //Return the variable to set the Private data field
     return press;
 }
