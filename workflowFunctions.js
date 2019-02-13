@@ -224,7 +224,7 @@ function getTotalVersions(versionList) {
 function getSides(pressSheetSides, coverSheetSides, lfSides, fileName) {
     var sides = '';
     if (pressSheetSides) {
-        sides = lfSides;
+        sides = pressSheetSides;
     }
     if (lfSides) {
         sides = lfSides;
