@@ -326,6 +326,99 @@ function getJobQuanity(qty, fileName, proofType, product, xmlPages, impoNumUp, r
   return finalQty;
 }
 
+function getSheetSize(group, jobName, regex, printSub, sheetWidth, sheetHeight, stockName, uhgProduct, producerSheetSize) {
+    var sheetSize = ''
+    if (producerSheetSize) {
+        sheetSize = producerSheetSize;
+    }
+
+    if (group) {
+        if (group == "UHG") {
+            sheetSize = "50X100";
+            if (uhgProduct == "Car Magnet") {
+                sheetSize = "48X120";
+            } else if ((uhgProduct == "Coroplast Sign") ||
+                (uhgProduct.indexOf("Sandwich Board Prints") != -1)) {
+                sheetSize = "60X120_Coroplast";
+            } else if (uhgProduct == "Foamcore Sign") {
+                sheetSize = "50X110";
+            } else if (uhgProduct == "Kiosk Front Graphic") {
+                sheetSize = "60X119";
+            } else if ((uhgProduct == "Feather Flags") ||
+                (uhgProduct == "Vinyl Banner")) {
+                sheetSize = "126X200";
+            } else if (uhgProduct == "Table Top Banner") {
+                sheetSize = "52X96";
+            } else if (uhgProduct == "Roll_up Banner") {
+                sheetSize = "126 Roll";
+            } else if ((uhgProduct.indexOf("Poster") != -1) ||
+                (uhgProduct == "Floor Graphics") ||
+                (uhgProduct == "Window Card Cling")) {
+                sheetSize = "54 Roll";
+            }
+        } else if (group == "Target") {
+            if (jobName.indexOf("Now Hiring Window Banner") != -1) {
+                sheetSize = "54X119"
+            } else if (jobName.indexOf("Now Hiring Signicade") != -1) {
+                sheetSize = "60X120"
+            } else if (jobName.indexOf("We_re Hiring Banner") != -1) {
+                sheetSize = "80X200"
+            }
+        } else if (group == "LFRetail") {
+            if (stockName.find("MAGNET") != -1) {
+                sheetSize = "48X120";
+            } else if (stockName.find("48PT") != -1) {
+                sheetSize = "50X100";
+            } else if (stockName.find("LEXJET") != -1) {
+                sheetSize = "42X120";
+            } else if ((stockName.find("SCRIM") != -1) ||
+                (stockName.find("SMOOTH") != -1)) {
+                sheetSize = "126X200";
+            } else if (stockName.find("ECOMEDIA") != -1) {
+                sheetSize = "52X96";
+            } else if (stockName.find("BACKLIT") != -1) {
+                sheetSize = "63X124 Q40 Backlit";
+            } else {
+                sheetSize = "60X120";
+            }
+        } else {
+            if (printSub) {
+                printSub = printSub.match(regex);
+                var adLam = job.getVariableAsString('[Metadata.Text:Path="/notification/order/orderItem/orderItemPrintJob/adhesiveLaminateAProductionName",Dataset="Xml",Model="XML"]');
+                var frontLam = job.getVariableAsString('[Metadata.Text:Path="/notification/order/orderItem/orderItemPrintJob/frontLaminateProductionName",Dataset="Xml",Model="XML"]');
+                var printSubSize = regex.capturedTexts[1];
+                var printSubSize1 = printSubSize.split("X");
+                var printSubSizeWidth = printSubSize1[0];
+                var mountSub = job.getVariableAsString('[Metadata.Text:Path="/notification/order/orderItem/orderItemPrintJob/mountSubstrateProductionName",Dataset="Xml",Model="XML"]');
+                var product = job.getVariableAsString('[Metadata.Text:Path="/notification/order/orderItem/itemProduct",Dataset="Xml",Model="XML"]');
+                if (product.find("Window") != -1) {
+                    sheetSize = printSubSize;
+                } else if (frontLam) {
+                    frontLam.match(regex);
+                    var frontLamSize = regex.capturedTexts[1];
+                    sheetSize = frontLamSize;
+                } else if (mountSub) {
+                    mountSub.match(regex);
+                    var mountSubSize = regex.capturedTexts[1].split("X");
+                    var mountSubSizeWidth = mountSubSize[0];
+                    var mountSubSizeHeight = mountSubSize[1];
+                    sheetWidth = Math.min(printSubSizeWidth, mountSubSizeWidth);
+                    sheetSize = sheetWidth + "X119";
+                    if (adLam) {
+                        if (adLam == "Bronze Adhesive Lam") {
+                            sheetSize = "43X119";
+                        }
+                    }
+                } else sheetSize = printSubSize;
+            } else {
+                sheetSize = sheetWidth.replace(".0", "") + "X" + sheetHeight.replace(".0", "");
+            }
+        }
+    }
+
+    return sheetSize;
+}
+
 function getCustomBookletType(operationList, product) {
     var bindingStyle = getBindingStyle(operationList);
     var customBookletType = "";
@@ -381,6 +474,7 @@ function getCustomBookletType(operationList, product) {
         getTotalVersions: getTotalVersions,
         getSides: getSides,
         getJobQuanity: getJobQuanity,
+        getSheetSize: getSheetSize,
         getCustomBookletType: getCustomBookletType
     }
 
