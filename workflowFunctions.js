@@ -326,14 +326,14 @@ function getJobQuanity(qty, fileName, proofType, product, xmlPages, impoNumUp, r
   return finalQty;
 }
 
-function getSheetSize(group, jobName, regex, printSub, sheetWidth, sheetHeight, stockName, uhgProduct, producerSheetSize) {
+function getSheetSize(lfGangGroup, fileName, regex, printSub, sheetWidth, sheetHeight, stockName, uhgProduct, producerSheetSize) {
     var sheetSize = ''
     if (producerSheetSize) {
         sheetSize = producerSheetSize;
     }
 
-    if (group) {
-        if (group == "UHG") {
+    if (lfGangGroup) {
+        if (lfGangGroup == "UHG") {
             sheetSize = "50X100";
             if (uhgProduct == "Car Magnet") {
                 sheetSize = "48X120";
@@ -356,15 +356,15 @@ function getSheetSize(group, jobName, regex, printSub, sheetWidth, sheetHeight, 
                 (uhgProduct == "Window Card Cling")) {
                 sheetSize = "54 Roll";
             }
-        } else if (group == "Target") {
-            if (jobName.indexOf("Now Hiring Window Banner") != -1) {
+        } else if (lfGangGroup == "Target") {
+            if (fileName.indexOf("NOW HIRING WINDOW BANNER") != -1) {
                 sheetSize = "54X119"
-            } else if (jobName.indexOf("Now Hiring Signicade") != -1) {
+            } else if (fileName.indexOf("NOW HIRING SIGNICADE") != -1) {
                 sheetSize = "60X120"
-            } else if (jobName.indexOf("We_re Hiring Banner") != -1) {
+            } else if (fileName.indexOf("WE_RE HIRING BANNER") != -1) {
                 sheetSize = "80X200"
             }
-        } else if (group == "LFRetail") {
+        } else if (lfGangGroup == "LFRetail") {
             if (stockName.find("MAGNET") != -1) {
                 sheetSize = "48X120";
             } else if (stockName.find("48PT") != -1) {
