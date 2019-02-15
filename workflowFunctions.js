@@ -326,8 +326,11 @@ function getJobQuanity(qty, fileName, proofType, product, xmlPages, impoNumUp, r
   return finalQty;
 }
 
-function getSheetSize(lfGangGroup, fileName, regex, printSub, sheetWidth, sheetHeight, stockName, uhgProduct, producerSheetSize) {
+function getSheetSize(lfGangGroup, fileName, printSub, sheetWidth, sheetHeight, stockName, producerSheetSize, shareID) {
     var sheetSize = ''
+    var uhgProduct = getUHGProduct(shareID);
+    var regex = /-?(\d+[X,x]\d+)-?/;
+
     if (producerSheetSize) {
         sheetSize = producerSheetSize;
     }
@@ -452,6 +455,175 @@ function getCustomBookletType(operationList, product) {
     return customBookletType;
 }
 
+function getUHGProduct(shareID){
+  //Pace Material ID 26
+  var rollupBannerDB = new File("//tbg-prod/RIP/TBG Automation/UHG_Products/Roll_up Banners.txt");
+  rollupBannerDB.open(File.ReadOnly);
+  var rollupBanner = rollupBannerDB.read();
+  rollupBannerDB.close();
+
+  //Pace Material ID 28
+  var carMagnetDB = new File("//tbg-prod/RIP/TBG Automation/UHG_Products/Car Magnet.txt");
+  carMagnetDB.open(File.ReadOnly);
+  var carMagnet = carMagnetDB.read();
+  carMagnetDB.close();
+
+  //Pace Material ID 23
+  var coroplastSignDB = new File("//tbg-prod/RIP/TBG Automation/UHG_Products/Coroplast Sign.txt");
+  coroplastSignDB.open(File.ReadOnly);
+  var coroplastSign = coroplastSignDB.read();
+  coroplastSignDB.close();
+
+  //Pace Material ID 27
+  var poster18x24DB = new File("//tbg-prod/RIP/TBG Automation/UHG_Products/Poster 18x24.txt");
+  poster18x24DB.open(File.ReadOnly);
+  var poster18x24 = poster18x24DB.read();
+  poster18x24DB.close();
+
+  //Pace Material ID 38
+  var poster22x28DB = new File("//tbg-prod/RIP/TBG Automation/UHG_Products/Poster 22x28.txt");
+  poster22x28DB.open(File.ReadOnly);
+  var poster22x28 = poster22x28DB.read();
+  poster22x28DB.close();
+
+  //Pace Material ID 38
+  var poster24x36DB = new File("//tbg-prod/RIP/TBG Automation/UHG_Products/Poster 24x36.txt");
+  poster24x36DB.open(File.ReadOnly);
+  var poster24x36 = poster24x36DB.read();
+  poster24x36DB.close();
+
+  //Pace Material ID 32
+  var featherFlagDB = new File("//tbg-prod/RIP/TBG Automation/UHG_Products/Feather Flags.txt");
+  featherFlagDB.open(File.ReadOnly);
+  var featherFlag = featherFlagDB.read();
+  featherFlagDB.close();
+
+  //Pace Material ID 25
+  var foamCoreDB = new File("//tbg-prod/RIP/TBG Automation/UHG_Products/Foamcore Sign.txt");
+  foamCoreDB.open(File.ReadOnly);
+  var foamCore = foamCoreDB.read();
+  foamCoreDB.close();
+
+  //Pace Material ID 24
+  var sandwichBoardDB = new File("//tbg-prod/RIP/TBG Automation/UHG_Products/Sandwich Board Prints.txt");
+  sandwichBoardDB.open(File.ReadOnly);
+  var sandwichBoard = sandwichBoardDB.read();
+  sandwichBoardDB.close();
+
+  //Pace Material ID 29
+  var vinylBannerDB = new File("//tbg-prod/RIP/TBG Automation/UHG_Products/Vinyl Banner.txt");
+  vinylBannerDB.open(File.ReadOnly);
+  var vinylBanner = vinylBannerDB.read();
+  vinylBannerDB.close();
+
+  //Pace Material ID 37
+  var tableTopBannerDB = new File("//tbg-prod/RIP/TBG Automation/UHG_Products/Table Top Banner.txt");
+  tableTopBannerDB.open(File.ReadOnly);
+  var tableTopBanner = tableTopBannerDB.read();
+  tableTopBannerDB.close();
+
+  //Pace Material ID 31
+  var windowGraphicDB = new File("//tbg-prod/RIP/TBG Automation/UHG_Products/Window Graphic.txt");
+  windowGraphicDB.open(File.ReadOnly);
+  var windowGraphic = windowGraphicDB.read();
+  windowGraphicDB.close();
+
+  //Pace Material ID 30
+  var kioskFrontGraphicDB = new File("//tbg-prod/RIP/TBG Automation/UHG_Products/Kiosk Front Graphic.txt");
+  kioskFrontGraphicDB.open(File.ReadOnly);
+  var kioskFrontGraphic = kioskFrontGraphicDB.read();
+  kioskFrontGraphicDB.close();
+
+  //Pace Material ID 40
+  var floorGraphicsDB = new File("//tbg-prod/RIP/TBG Automation/UHG_Products/Floor Graphics.txt");
+  floorGraphicsDB.open(File.ReadOnly);
+  var floorGraphics = floorGraphicsDB.read();
+  floorGraphicsDB.close();
+
+  //Pace Material ID 42
+  var sandwichBoard2sideDB = new File("//tbg-prod/RIP/TBG Automation/UHG_Products/Sandwich Board Prints 2-Sided.txt");
+  sandwichBoard2sideDB.open(File.ReadOnly);
+  var sandwichBoard2side = sandwichBoard2sideDB.read();
+  sandwichBoard2sideDB.close();
+
+  //Non-Printing Items
+  var nonPrintingDB = new File("//tbg-prod/RIP/TBG Automation/UHG_Products/Non-Printing.txt");
+  nonPrintingDB.open(File.ReadOnly);
+  var nonPrinting = nonPrintingDB.read();
+  nonPrintingDB.close();
+
+  var uhgProduct = "Not Configured";
+
+  shareID = "," + shareID + ","
+
+  if (rollupBanner.indexOf(shareID) !=-1){
+  uhgProduct = "Roll_up Banner"
+  }
+
+  if (carMagnet.indexOf(shareID) !=-1){
+  uhgProduct = "Car Magnet"
+  }
+
+  if (coroplastSign.indexOf(shareID) !=-1){
+  uhgProduct = "Coroplast Sign"
+  }
+
+  if (poster18x24.indexOf(shareID) !=-1){
+  uhgProduct = "Poster 18x24"
+  }
+
+  if (poster22x28.indexOf(shareID) !=-1){
+  uhgProduct = "Poster 22x28"
+  }
+
+  if (poster24x36.indexOf(shareID) !=-1){
+  uhgProduct = "Poster 24x36"
+  }
+
+  if (featherFlag.indexOf(shareID) !=-1){
+  uhgProduct = "Feather Flags"
+  }
+
+  if (foamCore.indexOf(shareID) !=-1){
+  uhgProduct = "Foamcore Sign"
+  }
+
+  if (sandwichBoard.indexOf(shareID) !=-1){
+  uhgProduct = "Sandwich Board Prints"
+  }
+
+  if (vinylBanner.indexOf(shareID) !=-1){
+  uhgProduct = "Vinyl Banner"
+  }
+
+  if (tableTopBanner.indexOf(shareID) !=-1){
+  uhgProduct = "Table Top Banner"
+  }
+
+  if (windowGraphic.indexOf(shareID) !=-1){
+  uhgProduct = "Window Graphic"
+  }
+
+  if (kioskFrontGraphic.indexOf(shareID) !=-1){
+  uhgProduct = "Kiosk Front Graphic"
+  }
+
+  if (floorGraphics.indexOf(shareID) !=-1){
+  uhgProduct = "Floor Graphics"
+  }
+
+  if (sandwichBoard2side.indexOf(shareID) !=-1){
+  uhgProduct = "Sandwich Board Prints 2-Sided"
+  }
+
+  if (nonPrinting.indexOf(shareID) !=-1){
+  uhgProduct = "Non-Printing"
+  }
+
+  return uhgProduct;
+
+}
+
 (function() {
     /**
      Returns an object to eval()
@@ -475,7 +647,8 @@ function getCustomBookletType(operationList, product) {
         getSides: getSides,
         getJobQuanity: getJobQuanity,
         getSheetSize: getSheetSize,
-        getCustomBookletType: getCustomBookletType
+        getCustomBookletType: getCustomBookletType,
+        getUHGProduct: getUHGProduct
     }
 
     return returnObject;
