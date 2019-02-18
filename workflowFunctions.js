@@ -98,7 +98,7 @@ function getVersionQuantity(versionList, versionSuffix) {
 }
 
 function getBindingStyle(operationList) {
-    var bindingStyle = false;
+    var bindingStyle = "";
     for (i = 0; i < operationList.length; i++) {
         var operation = operationList.getItem(i);
         var xmlOperationItem = operation.evalToString("./item", null);
@@ -245,7 +245,8 @@ function getJobQuanity(qty, fileName, proofType, product, xmlPages, impoNumUp, r
       } else {
           qty = 1;
       }
-      finalQty = qty
+      finalQty = qty;
+      return finalQty;
   }
 
   if (product == "Notepad") {
@@ -333,6 +334,7 @@ function getSheetSize(lfGangGroup, fileName, printSub, sheetWidth, sheetHeight, 
 
     if (producerSheetSize) {
         sheetSize = producerSheetSize;
+        return sheetSize
     }
 
     if (lfGangGroup) {
@@ -359,6 +361,7 @@ function getSheetSize(lfGangGroup, fileName, printSub, sheetWidth, sheetHeight, 
                 (uhgProduct == "Window Card Cling")) {
                 sheetSize = "54 Roll";
             }
+            return sheetSize
         } else if (lfGangGroup == "Target") {
             if (fileName.indexOf("NOW HIRING WINDOW BANNER") != -1) {
                 sheetSize = "54X119"
@@ -367,6 +370,7 @@ function getSheetSize(lfGangGroup, fileName, printSub, sheetWidth, sheetHeight, 
             } else if (fileName.indexOf("WE_RE HIRING BANNER") != -1) {
                 sheetSize = "80X200"
             }
+            return sheetSize
         } else if (lfGangGroup == "LFRetail") {
             if (stockName.find("MAGNET") != -1) {
                 sheetSize = "48X120";
@@ -383,18 +387,16 @@ function getSheetSize(lfGangGroup, fileName, printSub, sheetWidth, sheetHeight, 
                 sheetSize = "63X124 Q40 Backlit";
             } else {
                 sheetSize = "60X120";
+
             }
         } else {
             if (printSub) {
                 printSub = printSub.match(regex);
-                var adLam = job.getVariableAsString('[Metadata.Text:Path="/notification/order/orderItem/orderItemPrintJob/adhesiveLaminateAProductionName",Dataset="Xml",Model="XML"]');
-                var frontLam = job.getVariableAsString('[Metadata.Text:Path="/notification/order/orderItem/orderItemPrintJob/frontLaminateProductionName",Dataset="Xml",Model="XML"]');
                 var printSubSize = regex.capturedTexts[1];
                 var printSubSize1 = printSubSize.split("X");
                 var printSubSizeWidth = printSubSize1[0];
-                var mountSub = job.getVariableAsString('[Metadata.Text:Path="/notification/order/orderItem/orderItemPrintJob/mountSubstrateProductionName",Dataset="Xml",Model="XML"]');
-                var product = job.getVariableAsString('[Metadata.Text:Path="/notification/order/orderItem/itemProduct",Dataset="Xml",Model="XML"]');
-                if (product.find("Window") != -1) {
+
+                if (fileName.find("Window") != -1) {
                     sheetSize = printSubSize;
                 } else if (frontLam) {
                     frontLam.match(regex);
