@@ -394,6 +394,7 @@ function getSheetSize(lfGangGroup, fileName, printSub, sheetWidth, sheetHeight, 
                 sheetSize = "54 Roll";
             }
             return sheetSize
+
         } else if (lfGangGroup == "Target") {
             if (fileName.indexOf("NOW HIRING WINDOW BANNER") != -1) {
                 sheetSize = "54X119"
@@ -403,6 +404,7 @@ function getSheetSize(lfGangGroup, fileName, printSub, sheetWidth, sheetHeight, 
                 sheetSize = "80X200"
             }
             return sheetSize
+
         } else if (lfGangGroup == "LFRetail") {
             if (stockName.find("MAGNET") != -1) {
                 sheetSize = "48X120";
@@ -421,6 +423,7 @@ function getSheetSize(lfGangGroup, fileName, printSub, sheetWidth, sheetHeight, 
                 sheetSize = "60X120";
 
             }
+            return sheetSize
         } else {
             if (printSub) {
                 printSub = printSub.match(regex);
@@ -658,6 +661,24 @@ function getUHGProduct(shareID){
 
 }
 
+function getNumberAcross(tWidth, sheetWidth){
+sheetWidth += 2
+var numAcross = 0;
+
+numAcross = Math.floor(sheetWidth / tWidth)
+
+return numAcross;
+}
+
+function getNumberDown(tHeight, sheetHeight){
+sheetHeight += 2
+var numDown = 0;
+
+numDown = Math.floor(sheetHeight / tHeight)
+
+return numDown;
+}
+
 (function() {
     /**
      Returns an object to eval()
@@ -682,7 +703,9 @@ function getUHGProduct(shareID){
         getJobQuanity: getJobQuanity,
         getSheetSize: getSheetSize,
         getCustomBookletType: getCustomBookletType,
-        getUHGProduct: getUHGProduct
+        getUHGProduct: getUHGProduct,
+        getNumberAcross: getNumberAcross,
+        getNumberDown: getNumberDown
     }
 
     return returnObject;
