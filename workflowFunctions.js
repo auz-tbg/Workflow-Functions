@@ -358,7 +358,7 @@ function getSheetSize(lfGangGroup, fileName, printSub, sheetWidth, sheetHeight, 
                 sheetSize = "126 Roll";
             } else if ((uhgProduct.indexOf("Poster") != -1) ||
                 (uhgProduct == "Floor Graphics") ||
-                (uhgProduct == "Window Card Cling")) {
+                (uhgProduct == "Window Graphic")) {
                 sheetSize = "54 Roll";
             }
             return sheetSize
