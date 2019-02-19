@@ -214,6 +214,38 @@ function getStockType(sheetName) {
     }
 		return stockType
 }
+
+function getTemplate(operationList){
+var template = "undefined";
+
+for (i = 0; i < operationsList.length; i++) {
+	var operation = operationsList.getItem(i);
+    var xmlOperationName = operation.evalToString("./name", null);
+    var xmlOperationChoice = operation.evalToString("./choice", null)
+
+    if ((xmlOperationName == "Outside Finishing Die Cutting") ||
+		(xmlOperationName == "Outsource Finishing Die Cutting")){
+		   template = xmlOperationChoice;
+	}
+}
+//Fix these variables
+var hasScodix = job.getPrivateData("hasScodix");
+var BC = job.getPrivateData("BC");
+var press = getPress(device);
+
+if ((hasScodix == "true") &&
+	(BC == "true")){
+	if ((press.find("12") != -1) ||
+		(press.find("J") != -1)){
+		template = "ScodixBCLarge";
+	}
+	else template = "ScodixBC";
+}
+
+return template;
+
+}
+
 //get Total Versions in Job
 function getTotalVersions(versionList) {
     var totalVersions = versionList.length
