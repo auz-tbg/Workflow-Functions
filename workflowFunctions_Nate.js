@@ -486,10 +486,10 @@ function getCustomBookletType(operationList, product) {
   return customBookletType;
 }
 
-function getUHGProduct(shareID) {
+function getUHGProduct(shareID, job) {
   shareID = "," + shareID + ","
 
-  function isInDBFile(filePath) {
+  function isInTBG(filePath) {
     var file = new File(filePath);
     file.open(File.ReadOnly);
     var data = file.read();
@@ -504,12 +504,14 @@ function getUHGProduct(shareID) {
   var dirpath = "//tbg-prod/RIP/TBG Automation/UHG_Products/";
   var dir = new Dir(dirpath);
   var fileList = dir.entryList("*.txt", Dir.Files);
+  job.log(2, "fileList: " + fileList)
+  job.log(2, typeof(fileList));
 
   for (var a in fileList) {
     var fileName = fileList[a];
     var filePath = dirpath + fileName
 
-    if (isInDBFile(filePath)) {
+    if (isInTBG(filePath)) {
       return fileName.replace(".txt", "");
     }
   }
@@ -535,6 +537,7 @@ function getNumberDown(tHeight, sheetHeight) {
 }
 
 (function() {
+  var sequence = 0;
   /**
    Returns an object to eval()
 
@@ -561,7 +564,24 @@ function getNumberDown(tHeight, sheetHeight) {
     getCustomBookletType: getCustomBookletType,
     getUHGProduct: getUHGProduct,
     getNumberAcross: getNumberAcross,
-    getNumberDown: getNumberDown
+    getNumberDown: getNumberDown,
+
+    loadJobData: function(job) {
+      return {
+        adLam: job.getVariableAsString('[Metadata.Text:Path="/notification/order/orderItem/orderItemPrintJob/adhesiveLaminateAProductionName",Dataset="Xml",Model="XML"]'),
+        CSR: job.getVariableAsString('[Metadata.Text:Path="/notification/order/orderCSR",Dataset="Xml",Model="XML"]')
+      };
+    },
+
+    getClientSpecificProduct: function(job) {
+      var clientName = job.getPrivateData("ClientName");
+      if (clientName == "UHG") {
+        return getUHGProduct();
+      }
+      if (clientName == "Target") {
+        return getTargetProduct();
+      }
+    }
   }
 
   return returnObject;
