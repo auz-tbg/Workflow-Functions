@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 : job: jobfunction getPress(device) {
+=======
+function getPress(device) {
+>>>>>>> parent of 2e4f4be... Updated Var Lib and Added Load Job actions to Master Functions
   var press = ''
   //Using the device location Id from the producer submit notification, this table translates the location
   if (device == "137") device = "Envelope";
@@ -215,6 +219,7 @@ function getStockType(sheetName) {
   return stockType
 }
 
+<<<<<<< HEAD
 function getStockName(printSub, pressSheetName, coverSheetName) {
   var stockName = ''
   if (coverSheetName) {
@@ -229,6 +234,8 @@ function getStockName(printSub, pressSheetName, coverSheetName) {
   return stockName;
 };
 
+=======
+>>>>>>> parent of 2e4f4be... Updated Var Lib and Added Load Job actions to Master Functions
 function getTemplate(operationList) {
   var template = "undefined";
 
@@ -500,10 +507,17 @@ function getCustomBookletType(operationList, product) {
   return customBookletType;
 }
 
+<<<<<<< HEAD
 function getUHGProduct(shareID) {
   shareID = "," + shareID + ","
 
   function isInDBFile(filePath) {
+=======
+function getUHGProduct(shareID, job) {
+  shareID = "," + shareID + ","
+
+  function isInTBG(filePath) {
+>>>>>>> parent of 2e4f4be... Updated Var Lib and Added Load Job actions to Master Functions
     var file = new File(filePath);
     file.open(File.ReadOnly);
     var data = file.read();
@@ -518,12 +532,21 @@ function getUHGProduct(shareID) {
   var dirpath = "//tbg-prod/RIP/TBG Automation/UHG_Products/";
   var dir = new Dir(dirpath);
   var fileList = dir.entryList("*.txt", Dir.Files);
+<<<<<<< HEAD
+=======
+  job.log(2, "fileList: " + fileList)
+  job.log(2, typeof(fileList));
+>>>>>>> parent of 2e4f4be... Updated Var Lib and Added Load Job actions to Master Functions
 
   for (var a in fileList) {
     var fileName = fileList[a];
     var filePath = dirpath + fileName
 
+<<<<<<< HEAD
     if (isInDBFile(filePath)) {
+=======
+    if (isInTBG(filePath)) {
+>>>>>>> parent of 2e4f4be... Updated Var Lib and Added Load Job actions to Master Functions
       return fileName.replace(".txt", "");
     }
   }
@@ -549,6 +572,10 @@ function getNumberDown(tHeight, sheetHeight) {
 }
 
 (function() {
+<<<<<<< HEAD
+=======
+  var sequence = 0;
+>>>>>>> parent of 2e4f4be... Updated Var Lib and Added Load Job actions to Master Functions
   /**
    Returns an object to eval()
 
@@ -567,7 +594,10 @@ function getNumberDown(tHeight, sheetHeight) {
     isSmallFold: isSmallFold,
     isHardProof: isHardProof,
     getStockType: getStockType,
+<<<<<<< HEAD
     getStockName: getStockName,
+=======
+>>>>>>> parent of 2e4f4be... Updated Var Lib and Added Load Job actions to Master Functions
     getTotalVersions: getTotalVersions,
     getTemplate: getTemplate,
     getSides: getSides,
@@ -581,6 +611,7 @@ function getNumberDown(tHeight, sheetHeight) {
     loadJobData: function(job) {
       return {
         adLam: job.getVariableAsString('[Metadata.Text:Path="/notification/order/orderItem/orderItemPrintJob/adhesiveLaminateAProductionName",Dataset="Xml",Model="XML"]'),
+<<<<<<< HEAD
         csr: job.getVariableAsString('[Metadata.Text:Path="/notification/order/orderCSR",Dataset="Xml",Model="XML"]'),
         coverSheetName: job.getVariableAsString('[Metadata.Text:Path="/notification/order/orderItem/orderItemPrintJob/coverPressSheet/name",Dataset="Xml",Model="XML"]'),
         coverSheetSides: job.getVariableAsString('[Metadata.Text:Path="/notification/order/orderItem/orderItemPrintJob/coverPressSheet/sides",Dataset="Xml",Model="XML"]'),
@@ -602,6 +633,20 @@ function getNumberDown(tHeight, sheetHeight) {
         sheetHeight: job.getVariableAsString('[Metadata.Text:Path="/notification/order/orderItem/orderItemPrintJob/pressSheet/height",Dataset="Xml",Model="XML"]'),
         sheetWidth: job.getVariableAsString('[Metadata.Text:Path="/notification/order/orderItem/orderItemPrintJob/pressSheet/width",Dataset="Xml",Model="XML"]')
       };
+=======
+        CSR: job.getVariableAsString('[Metadata.Text:Path="/notification/order/orderCSR",Dataset="Xml",Model="XML"]')
+      };
+    },
+
+    getClientSpecificProduct: function(job) {
+      var clientName = job.getPrivateData("ClientName");
+      if (clientName == "UHG") {
+        return getUHGProduct();
+      }
+      if (clientName == "Target") {
+        return getTargetProduct();
+      }
+>>>>>>> parent of 2e4f4be... Updated Var Lib and Added Load Job actions to Master Functions
     }
   }
 
