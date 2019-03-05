@@ -1,3 +1,20 @@
+function getOrderNumberFromName(parsedJobName){
+  var order = parsedJobName[0];
+
+  return order;
+}
+
+function getJobPathFromName(parsedJobName, server){
+  var order = parsedJobName[0];
+  var jobNumber = parsedJobName[1];
+  var dirpath = server + order + "/";
+  var dir = new Dir(dirpath);
+  var folder = dir.entryList( "*" + jobNumber + "*" , Dir.Dirs);
+  var jobPath = folder.toString();
+
+  return jobPath;
+}
+
 function getPress(device) {
   var press = ''
   //Using the device location Id from the producer submit notification, this table translates the location
@@ -534,12 +551,28 @@ function getNumberDown(tHeight, sheetHeight) {
   return numDown;
 }
 
+function getCurrentTimeStamp(){
+  var today = new Date();
+  var timeStamp = today.getTime();
+
+  return timeStamp
+}
+
+function getElaspsedTime(startTime){
+    var timeStamp = getCurrentTimeStamp();
+    var elapsedTime = (timeStamp - startTime) / 1000;
+
+    return elapsedTime
+}
+
 (function() {
   /**
    Returns an object to eval()
 
   */
   var returnObject = {
+    getOrderNumberFromName: getOrderNumberFromName,
+    getJobPathFromName: getJobPathFromName,
     getPress: getPress,
     getIndigoAddress: getIndigoAddress,
     getVersionHeight: getVersionHeight,
@@ -562,6 +595,7 @@ function getNumberDown(tHeight, sheetHeight) {
     getUHGProduct: getUHGProduct,
     getNumberAcross: getNumberAcross,
     getNumberDown: getNumberDown,
+    getCurrentTimeStamp:getCurrentTimeStamp,
 
     loadJobData: function(job) {
       return {
@@ -587,6 +621,15 @@ function getNumberDown(tHeight, sheetHeight) {
         shareID: job.getVariableAsString('[Metadata.Text:Path="/notification/order/orderItem/itemShareId",Dataset="Xml",Model="XML"]'),
         sheetHeight: job.getVariableAsString('[Metadata.Text:Path="/notification/order/orderItem/orderItemPrintJob/pressSheet/height",Dataset="Xml",Model="XML"]'),
         sheetWidth: job.getVariableAsString('[Metadata.Text:Path="/notification/order/orderItem/orderItemPrintJob/pressSheet/width",Dataset="Xml",Model="XML"]')
+      };
+    },
+
+    loadPhoenixData: function(job) {
+      return {
+      phoenixID: job.getVariableAsString('[Metadata.Text:Path="/job/id",Dataset="Phoenix Plan",Model="XML"]'),
+      layoutIndex :job.getVariableAsString('[Metadata.Text:Path="/job/layouts/layout/index",Dataset="Phoenix Plan",Model="XML"]'),
+      layoutVersions :job.getVariableAsNumber('[Metadata.Text:Path="/job/layouts/layout/product-count",Dataset="Phoenix Plan",Model="XML"]'),
+      layoutRunLength :job.getVariableAsString('[Metadata.Text:Path="/job/layouts/layout/run-length",Dataset="Phoenix Plan",Model="XML"]')
       };
     }
 

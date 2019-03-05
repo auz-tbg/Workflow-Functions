@@ -4,6 +4,8 @@ workflowFunctionsFile.open(File.ReadOnly);
 var workflowFunctionsTxt = workflowFunctionsFile.read();
 workflowFunctionsFile.close();
 var workflowFunctions = eval(workflowFunctionsTxt);
+var jobData = workflowFunctions.loadJobData(job);
+var phoenixData = workflowFunctions.loadPhoenixData(job);
 ///////////////////////////////////////////////////////
 
 ////////////////Load Operation List////////////////////
