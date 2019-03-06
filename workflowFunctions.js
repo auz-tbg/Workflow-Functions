@@ -503,7 +503,7 @@ function getCustomBookletType(operationList, product) {
   return customBookletType;
 }
 
-function getUHGProduct(shareID) {
+function getUHGProduct(shareID, job) {
   shareID = "," + shareID + ","
 
   function isInDBFile(filePath) {
@@ -521,6 +521,7 @@ function getUHGProduct(shareID) {
   var dirpath = "//tbg-prod/RIP/TBG Automation/UHG_Products/";
   var dir = new Dir(dirpath);
   var fileList = dir.entryList("*.txt", Dir.Files);
+  job.log(2, "Prod List: " + fileList);
 
   for (var a in fileList) {
     var fileName = fileList[a];
@@ -627,6 +628,7 @@ function getElaspsedTime(startTime){
     loadPhoenixData: function(job) {
       return {
       phoenixID: job.getVariableAsString('[Metadata.Text:Path="/job/id",Dataset="Phoenix Plan",Model="XML"]'),
+      layoutCount: job.getVariableAsString('[Metadata.Text:Path="/job/layout-count",Dataset="Phoenix Plan",Model="XML"]'),
       layoutIndex :job.getVariableAsString('[Metadata.Text:Path="/job/layouts/layout/index",Dataset="Phoenix Plan",Model="XML"]'),
       layoutVersions :job.getVariableAsNumber('[Metadata.Text:Path="/job/layouts/layout/product-count",Dataset="Phoenix Plan",Model="XML"]'),
       layoutRunLength :job.getVariableAsString('[Metadata.Text:Path="/job/layouts/layout/run-length",Dataset="Phoenix Plan",Model="XML"]')
