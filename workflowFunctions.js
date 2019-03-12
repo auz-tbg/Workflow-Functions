@@ -597,7 +597,7 @@ function getElaspsedTime(startTime){
     getNumberAcross: getNumberAcross,
     getNumberDown: getNumberDown,
     getCurrentTimeStamp:getCurrentTimeStamp,
-
+    
     loadJobData: function(job) {
       return {
         adLam: job.getVariableAsString('[Metadata.Text:Path="/notification/order/orderItem/orderItemPrintJob/adhesiveLaminateAProductionName",Dataset="Xml",Model="XML"]'),
@@ -621,7 +621,7 @@ function getElaspsedTime(startTime){
         qty: job.getVariableAsNumber('[Metadata.Text:Path="/notification/order/orderItem/orderItemPrintJob/versions/item[1]/quantity",Dataset="Xml",Model="XML"]'),
         shareID: job.getVariableAsString('[Metadata.Text:Path="/notification/order/orderItem/itemShareId",Dataset="Xml",Model="XML"]'),
         sheetHeight: job.getVariableAsString('[Metadata.Text:Path="/notification/order/orderItem/orderItemPrintJob/pressSheet/height",Dataset="Xml",Model="XML"]'),
-        sheetWidth: job.getVariableAsString('[Metadata.Text:Path="/notification/order/orderItem/orderItemPrintJob/pressSheet/width",Dataset="Xml",Model="XML"]')
+        sheetWidth: job.getVariableAsString('[Metadata.Text:Path="/notification/order/orderItem/orderItemPrintJob/pressSheet/width",Dataset="Xml",Model="XML"]'),
       };
     },
 
@@ -631,7 +631,8 @@ function getElaspsedTime(startTime){
       layoutCount: job.getVariableAsString('[Metadata.Text:Path="/job/layout-count",Dataset="Phoenix Plan",Model="XML"]'),
       layoutIndex :job.getVariableAsString('[Metadata.Text:Path="/job/layouts/layout/index",Dataset="Phoenix Plan",Model="XML"]'),
       layoutVersions :job.getVariableAsNumber('[Metadata.Text:Path="/job/layouts/layout/product-count",Dataset="Phoenix Plan",Model="XML"]'),
-      layoutRunLength :job.getVariableAsString('[Metadata.Text:Path="/job/layouts/layout/run-length",Dataset="Phoenix Plan",Model="XML"]')
+      layoutRunLength :job.getVariableAsString('[Metadata.Text:Path="/job/layouts/layout/run-length",Dataset="Phoenix Plan",Model="XML"]'),
+      productPlaced :job.getVariableAsString('[Metadata.Text:Path="/job/products/product/placed",Dataset="Phoenix Plan",Model="XML"]')
       };
     }
 
