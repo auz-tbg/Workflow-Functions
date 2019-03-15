@@ -566,6 +566,102 @@ function getElaspsedTime(startTime){
     return elapsedTime
 }
 
+function getGoogleID(userName) {
+  var googleID = 'undefined'
+  var userKey = userName.toLowerCase().replace(' ', '');
+
+  switch (userKey) {
+    case "alanstratton":
+      googleID = '105319433137268781003';
+      break;
+    case "alissadole":
+      googleID = '114108486235181002384';
+      break;
+    case "andrewoswood":
+      googleID = '100634920171074119711';
+      break;
+    case "barbyoung":
+      googleID = '117591163301022489322';
+      break;
+    case "coryfeil":
+      googleID = '109655500669959769376';
+      break;
+    case "daveyerxa":
+      googleID = '102242822331687709628';
+      break;
+    case "debangell":
+      googleID = '110577953053513546451';
+      break;
+    case "dianasammler":
+      googleID = '114824163981712422936';
+      break;
+    case "diegodiaz":
+      googleID = '116615107094393692813';
+      break;
+    case "dontewhite":
+      googleID = '113404198977414094431';
+      break;
+    case "erikotto":
+      googleID = '105356723970043743228';
+      break;
+    case "janapederson":
+      googleID = '110943842888774790056';
+      break;
+    case "jeffgolfis":
+      googleID = '103706255863768882779';
+      break;
+    case "jerryfritz":
+      googleID = '113039384763249870070';
+      break;
+    case "joekadlec":
+        googleID = '102320879515205637964';
+        break;
+    case "kellybergeron":
+      googleID = '112538674769358419382';
+      break;
+    case "kieshabigelow":
+      googleID = '108902209270830568099';
+      break;
+    case "kurtpeters":
+      googleID = '109098933375591108116';
+      break;
+    case "leerogers":
+      googleID = '107695763694134037464';
+      break;
+    case "lucyworrel":
+      googleID = '103348019010473666703';
+      break;
+    case "mattblum":
+      googleID = '102722980113446282164';
+      break;
+    case "melissamorrison":
+      googleID = '113567893227891159851';
+      break;
+    case "michaelbrowning":
+      googleID = '117315350860053748946';
+      break;
+    case "renaepille":
+      googleID = '116871546140706638781';
+      break;
+    case "thomascosgrove":
+      googleID = '107301505193925122944';
+      break;
+    case "tytschumperlin":
+      googleID = '111451475544037242055';
+      break;
+    case "waynekalal":
+      googleID = '105797213364342459130';
+      break;
+
+    default:
+      googleID = 'undefined';
+      break;
+
+  }
+
+  return googleID
+}
+
 (function() {
   /**
    Returns an object to eval()
@@ -597,6 +693,7 @@ function getElaspsedTime(startTime){
     getNumberAcross: getNumberAcross,
     getNumberDown: getNumberDown,
     getCurrentTimeStamp:getCurrentTimeStamp,
+    getGoogleID : getGoogleID,
 
     loadJobData: function(job) {
       return {
@@ -619,6 +716,7 @@ function getElaspsedTime(startTime){
         proofStatus: job.getVariableAsString('[Metadata.Text:Path="/notification/order/orderItem/itemProofStatus",Dataset="Xml",Model="XML"]'),
         proofType: job.getVariableAsString('[Metadata.Text:Path="/notification/order/orderItem/itemProofType",Dataset="Xml",Model="XML"]'),
         qty: job.getVariableAsNumber('[Metadata.Text:Path="/notification/order/orderItem/orderItemPrintJob/versions/item[1]/quantity",Dataset="Xml",Model="XML"]'),
+        siteName : job.getVariableAsString('[Metadata.Text:Path="/notification/workflow/sitename",Dataset="Xml",Model="XML"]'),
         shareID: job.getVariableAsString('[Metadata.Text:Path="/notification/order/orderItem/itemShareId",Dataset="Xml",Model="XML"]'),
         sheetHeight: job.getVariableAsString('[Metadata.Text:Path="/notification/order/orderItem/orderItemPrintJob/pressSheet/height",Dataset="Xml",Model="XML"]'),
         sheetWidth: job.getVariableAsString('[Metadata.Text:Path="/notification/order/orderItem/orderItemPrintJob/pressSheet/width",Dataset="Xml",Model="XML"]')
