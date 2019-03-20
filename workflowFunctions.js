@@ -215,8 +215,8 @@ function isSmallFold(job) {
 
 function isHardProof(job) {
   var jobData = loadJobData(job);
-  var pieceWidth = jobData.proofStatus;
-  var pieceHeight = jobData.proofType;
+  var proofStatus = jobData.proofStatus;
+  var proofType = jobData.proofType;
   var isHardProof = false;
   if ((proofType.find("Hard Proof") != -1) &&
     (proofStatus != "Approved")) {
@@ -299,9 +299,16 @@ function getSides(job) {
   return sides;
 }
 
-function getJobQuanity(qty, fileName, proofType, product, xmlPages, impoNumUp, reworkQty, lfGangGroup, operationList) {
+function getJobQuanity(job, operationList) {
   var jobData = loadJobData(job);
+  var fileName = jobData.fileName;
+  var impoNumUp = jobData.impoNumUp;
+  var lfGangGroup = jobData.impoNumUp;
+  var product = jobData.product;
+  var proofType = jobData.proofType;
   var qty = jobData.qty;
+  var reworkQty = jobData.reworkQty;
+  var xmlPages = jobData.pages;
   var finalQty = qty * 1.05
   var bindingStyle = getBindingStyle(operationList);
 
@@ -319,7 +326,7 @@ function getJobQuanity(qty, fileName, proofType, product, xmlPages, impoNumUp, r
     if (qty >= 1000) {
       qty *= 1.02;
     } else {
-      qty = qty * pages;
+      qty = qty * xmlPages;
     }
     finalQty = qty
   }
@@ -397,7 +404,7 @@ function getSheetSize(stockName, job) {
   var jobData = loadJobData(job);
   var sheetSize = 'undefined'
   var shareID = jobData.shareID;
-  var uhgProduct = getUHGProduct(shareID);
+  var uhgProduct = getUHGProduct(job);
   var regex = /-?(\d+[X,x]\d+)-?/;
   var adLam = jobData.adLam;
   var fileName = jobData.fileName;
@@ -506,7 +513,9 @@ function getSheetSize(stockName, job) {
   return sheetSize;
 }
 
-function getCustomBookletType(operationList, product) {
+function getCustomBookletType(operationList, job) {
+  var jobData = loadJobData(job);
+  var product = jobData.product;
   var bindingStyle = getBindingStyle(operationList);
   var customBookletType = "";
   if (product.find("Custom Booklet") != -1) {
@@ -539,7 +548,9 @@ function getCustomBookletType(operationList, product) {
   return customBookletType;
 }
 
-function getUHGProduct(shareID, job) {
+function getUHGProduct(job) {
+  var jobData = loadJobData(job);
+  var shareID = jobData.shareID;
   shareID = "," + shareID + ","
 
   function isInDBFile(filePath) {
@@ -722,6 +733,7 @@ function loadJobData(job) {
     proofStatus: job.getVariableAsString('[Metadata.Text:Path="/notification/order/orderItem/itemProofStatus",Dataset="Xml",Model="XML"]'),
     proofType: job.getVariableAsString('[Metadata.Text:Path="/notification/order/orderItem/itemProofType",Dataset="Xml",Model="XML"]'),
     qty: job.getVariableAsNumber('[Metadata.Text:Path="/notification/order/orderItem/orderItemPrintJob/versions/item[1]/quantity",Dataset="Xml",Model="XML"]'),
+    reworkQty : job.getPrivateData("reworkQty"),
     siteName: job.getVariableAsString('[Metadata.Text:Path="/notification/workflow/sitename",Dataset="Xml",Model="XML"]'),
     shareID: job.getVariableAsString('[Metadata.Text:Path="/notification/order/orderItem/itemShareId",Dataset="Xml",Model="XML"]'),
     sheetHeight: job.getVariableAsString('[Metadata.Text:Path="/notification/order/orderItem/orderItemPrintJob/pressSheet/height",Dataset="Xml",Model="XML"]'),
