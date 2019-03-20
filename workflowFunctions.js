@@ -1,15 +1,15 @@
-function getOrderNumberFromName(parsedJobName){
+function getOrderNumberFromName(parsedJobName) {
   var order = parsedJobName[0];
 
   return order;
 }
 
-function getJobPathFromName(parsedJobName, server){
+function getJobPathFromName(parsedJobName, server) {
   var order = parsedJobName[0];
   var jobNumber = parsedJobName[1];
   var dirpath = server + order + "/";
   var dir = new Dir(dirpath);
-  var folder = dir.entryList( "*" + jobNumber + "*" , Dir.Dirs);
+  var folder = dir.entryList("*" + jobNumber + "*", Dir.Dirs);
   var jobPath = folder.toString();
 
   return jobPath;
@@ -252,9 +252,9 @@ function getTemplate(operationList) {
 
   if ((hasScodix) &&
     (BC == "true")) {
-      template = "ScodixBCLarge";
+    template = "ScodixBCLarge";
   }
-    return template;
+  return template;
 }
 
 //get Total Versions in Job
@@ -370,10 +370,21 @@ function getJobQuanity(qty, fileName, proofType, product, xmlPages, impoNumUp, r
   return finalQty;
 }
 
-function getSheetSize(lfGangGroup, fileName, printSub, sheetWidth, sheetHeight, stockName, producerSheetSize, shareID) {
-  var sheetSize = ''
+function getSheetSize(stockName, job) {
+  var jobData = loadJobData(job);
+  var sheetSize = 'undefined'
+  var shareID = jobData.shareID;
   var uhgProduct = getUHGProduct(shareID);
   var regex = /-?(\d+[X,x]\d+)-?/;
+  var adLam = jobData.adLam;
+  var fileName = jobData.fileName;
+  var frontLam = jobData.frontLam;
+  var lfGangGroup = jobData.lfGangGroup;
+  var mountSub = jobData.mountSub;
+  var printSub = jobData.printSub;
+  var producerSheetSize = jobData.producerSheetSize;
+  var sheetHeight =jobData.sheetHeight;
+  var sheetWidth =jobData.sheetWidth;
 
   if (producerSheetSize) {
     sheetSize = producerSheetSize;
@@ -435,38 +446,40 @@ function getSheetSize(lfGangGroup, fileName, printSub, sheetWidth, sheetHeight, 
 
       }
       return sheetSize
-    } else {
-      if (printSub) {
-        printSub = printSub.match(regex);
-        var printSubSize = regex.capturedTexts[1];
-        var printSubSize1 = printSubSize.split("X");
-        var printSubSizeWidth = printSubSize1[0];
-
-        if (fileName.find("Window") != -1) {
-          sheetSize = printSubSize;
-        } else if (frontLam) {
-          frontLam.match(regex);
-          var frontLamSize = regex.capturedTexts[1];
-          sheetSize = frontLamSize;
-        } else if (mountSub) {
-          mountSub.match(regex);
-          var mountSubSize = regex.capturedTexts[1].split("X");
-          var mountSubSizeWidth = mountSubSize[0];
-          var mountSubSizeHeight = mountSubSize[1];
-          sheetWidth = Math.min(printSubSizeWidth, mountSubSizeWidth);
-          sheetSize = sheetWidth + "X119";
-          if (adLam) {
-            if (adLam == "Bronze Adhesive Lam") {
-              sheetSize = "43X119";
-            }
-          }
-        } else sheetSize = printSubSize;
-      } else {
-        sheetSize = sheetWidth.replace(".0", "") + "X" + sheetHeight.replace(".0", "");
-      }
     }
-  }
+  } else {
+    if (printSub) {
+      printSub = printSub.match(regex);
+      var printSubSize = regex.capturedTexts[1];
+      var printSubSize1 = printSubSize.split("X");
+      var printSubSizeWidth = printSubSize1[0];
 
+      if (fileName.find("Window") != -1) {
+        sheetSize = printSubSize;
+      } else if (frontLam) {
+        frontLam.match(regex);
+        var frontLamSize = regex.capturedTexts[1];
+        sheetSize = frontLamSize;
+      } else if (mountSub) {
+        mountSub.match(regex);
+        var mountSubSize = regex.capturedTexts[1].split("X");
+        var mountSubSizeWidth = mountSubSize[0];
+        var mountSubSizeHeight = mountSubSize[1];
+        sheetWidth = Math.min(printSubSizeWidth, mountSubSizeWidth);
+        sheetSize = sheetWidth + "X119";
+        if (adLam) {
+          if (adLam == "Bronze Adhesive Lam") {
+            sheetSize = "43X119";
+          }
+          return sheetSize;
+        }
+      } else sheetSize = printSubSize;
+      return sheetSize;
+    } else {
+      sheetSize = sheetWidth.replace(".0", "") + "X" + sheetHeight.replace(".0", "");
+    }
+    return sheetSize;
+  }
   return sheetSize;
 }
 
@@ -521,7 +534,7 @@ function getUHGProduct(shareID, job) {
   var dirpath = "//tbg-prod/RIP/TBG Automation/UHG_Products/";
   var dir = new Dir(dirpath);
   var fileList = dir.entryList("*.txt", Dir.Files);
-  job.log(2, "Prod List: " + fileList);
+  //job.log(2, "Prod List: " + fileList);
 
   for (var a in fileList) {
     var fileName = fileList[a];
@@ -552,18 +565,18 @@ function getNumberDown(tHeight, sheetHeight) {
   return numDown;
 }
 
-function getCurrentTimeStamp(){
+function getCurrentTimeStamp() {
   var today = new Date();
   var timeStamp = today.getTime();
 
   return timeStamp
 }
 
-function getElaspsedTime(startTime){
-    var timeStamp = getCurrentTimeStamp();
-    var elapsedTime = (timeStamp - startTime) / 1000;
+function getElaspsedTime(startTime) {
+  var timeStamp = getCurrentTimeStamp();
+  var elapsedTime = (timeStamp - startTime) / 1000;
 
-    return elapsedTime
+  return elapsedTime
 }
 
 function getGoogleID(userName) {
@@ -614,8 +627,8 @@ function getGoogleID(userName) {
       googleID = '113039384763249870070';
       break;
     case "joekadlec":
-        googleID = '102320879515205637964';
-        break;
+      googleID = '102320879515205637964';
+      break;
     case "kellybergeron":
       googleID = '112538674769358419382';
       break;
@@ -662,6 +675,48 @@ function getGoogleID(userName) {
   return googleID
 }
 
+function loadJobData(job) {
+  return {
+    adLam: job.getVariableAsString('[Metadata.Text:Path="/notification/order/orderItem/orderItemPrintJob/adhesiveLaminateAProductionName",Dataset="Xml",Model="XML"]'),
+    csr: job.getVariableAsString('[Metadata.Text:Path="/notification/order/orderCSR",Dataset="Xml",Model="XML"]'),
+    coverSheetName: job.getVariableAsString('[Metadata.Text:Path="/notification/order/orderItem/orderItemPrintJob/coverPressSheet/name",Dataset="Xml",Model="XML"]'),
+    coverSheetSides: job.getVariableAsString('[Metadata.Text:Path="/notification/order/orderItem/orderItemPrintJob/coverPressSheet/sides",Dataset="Xml",Model="XML"]'),
+    device: job.getVariableAsString('[Metadata.Text:Path="/notification/locationId",Dataset="Xml",Model="XML"]'),
+    fileName: job.getNameProper().toUpperCase(),
+    frontLam: job.getVariableAsString('[Metadata.Text:Path="/notification/order/orderItem/orderItemPrintJob/frontLaminate",Dataset="Xml",Model="XML"]'),
+    impoNumUp: job.getVariableAsNumber('[Metadata.Text:Path="pdf:Subject",Dataset="Xmp",Model="XMP"]'),
+    lfGangGroup: job.getPrivateData("group"),
+    lfSides: job.getVariableAsString('[Metadata.Text:Path="/notification/order/orderItem/orderItemPrintJob/sides",Dataset="Xml",Model="XML"]'),
+    mountSub: job.getVariableAsString('[Metadata.Text:Path="/notification/order/orderItem/orderItemPrintJob/mountSubstrate",Dataset="Xml",Model="XML"]'),
+    pages: job.getVariableAsNumber('[Metadata.Text:Path="/notification/order/orderItem/orderItemPrintJob/pages",Dataset="Xml",Model="XML"]'),
+    pieceHeight: job.getVariableAsNumber('[Metadata.Text:Path="/notification/order/orderItem/orderItemPrintJob/pieceHeight",Dataset="Xml",Model="XML"]'),
+    pieceWidth: job.getVariableAsNumber('[Metadata.Text:Path="/notification/order/orderItem/orderItemPrintJob/pieceWidth",Dataset="Xml",Model="XML"]'),
+    pressSheetName: job.getVariableAsString('[Metadata.Text:Path="/notification/order/orderItem/orderItemPrintJob/pressSheet/name",Dataset="Xml",Model="XML"]'),
+    pressSheetSides: job.getVariableAsString('[Metadata.Text:Path="/notification/order/orderItem/orderItemPrintJob/pressSheet/sides",Dataset="Xml",Model="XML"]'),
+    printSub: job.getVariableAsString('[Metadata.Text:Path="/notification/order/orderItem/orderItemPrintJob/printSubstrateAProductionName",Dataset="Xml",Model="XML"]'),
+    producerSheetSize: job.getVariableAsString('[Metadata.Text:Path="/notification/sheetSize",Dataset="Xml",Model="XML"]'),
+    product: job.getVariableAsString('[Metadata.Text:Path="/notification/order/orderItem/itemProduct",Dataset="Xml",Model="XML"]'),
+    proofStatus: job.getVariableAsString('[Metadata.Text:Path="/notification/order/orderItem/itemProofStatus",Dataset="Xml",Model="XML"]'),
+    proofType: job.getVariableAsString('[Metadata.Text:Path="/notification/order/orderItem/itemProofType",Dataset="Xml",Model="XML"]'),
+    qty: job.getVariableAsNumber('[Metadata.Text:Path="/notification/order/orderItem/orderItemPrintJob/versions/item[1]/quantity",Dataset="Xml",Model="XML"]'),
+    siteName: job.getVariableAsString('[Metadata.Text:Path="/notification/workflow/sitename",Dataset="Xml",Model="XML"]'),
+    shareID: job.getVariableAsString('[Metadata.Text:Path="/notification/order/orderItem/itemShareId",Dataset="Xml",Model="XML"]'),
+    sheetHeight: job.getVariableAsString('[Metadata.Text:Path="/notification/order/orderItem/orderItemPrintJob/pressSheet/height",Dataset="Xml",Model="XML"]'),
+    sheetWidth: job.getVariableAsString('[Metadata.Text:Path="/notification/order/orderItem/orderItemPrintJob/pressSheet/width",Dataset="Xml",Model="XML"]')
+  }
+}
+
+function loadPhoenixData(job) {
+  return {
+    phoenixID: job.getVariableAsString('[Metadata.Text:Path="/job/id",Dataset="Phoenix Plan",Model="XML"]'),
+    layoutCount: job.getVariableAsString('[Metadata.Text:Path="/job/layout-count",Dataset="Phoenix Plan",Model="XML"]'),
+    layoutIndex: job.getVariableAsString('[Metadata.Text:Path="/job/layouts/layout/index",Dataset="Phoenix Plan",Model="XML"]'),
+    layoutVersions: job.getVariableAsNumber('[Metadata.Text:Path="/job/layouts/layout/product-count",Dataset="Phoenix Plan",Model="XML"]'),
+    layoutRunLength: job.getVariableAsString('[Metadata.Text:Path="/job/layouts/layout/run-length",Dataset="Phoenix Plan",Model="XML"]'),
+    productPlaced: job.getVariableAsString('[Metadata.Text:Path="/job/products/product/placed",Dataset="Phoenix Plan",Model="XML"]')
+  };
+}
+
 (function() {
   /**
    Returns an object to eval()
@@ -692,48 +747,10 @@ function getGoogleID(userName) {
     getUHGProduct: getUHGProduct,
     getNumberAcross: getNumberAcross,
     getNumberDown: getNumberDown,
-    getCurrentTimeStamp:getCurrentTimeStamp,
-    getGoogleID : getGoogleID,
-
-    loadJobData: function(job) {
-      return {
-        adLam: job.getVariableAsString('[Metadata.Text:Path="/notification/order/orderItem/orderItemPrintJob/adhesiveLaminateAProductionName",Dataset="Xml",Model="XML"]'),
-        csr: job.getVariableAsString('[Metadata.Text:Path="/notification/order/orderCSR",Dataset="Xml",Model="XML"]'),
-        coverSheetName: job.getVariableAsString('[Metadata.Text:Path="/notification/order/orderItem/orderItemPrintJob/coverPressSheet/name",Dataset="Xml",Model="XML"]'),
-        coverSheetSides: job.getVariableAsString('[Metadata.Text:Path="/notification/order/orderItem/orderItemPrintJob/coverPressSheet/sides",Dataset="Xml",Model="XML"]'),
-        device: job.getVariableAsString('[Metadata.Text:Path="/notification/locationId",Dataset="Xml",Model="XML"]'),
-        fileName: job.getNameProper().toUpperCase(),
-        impoNumUp: job.getVariableAsNumber('[Metadata.Text:Path="pdf:Subject",Dataset="Xmp",Model="XMP"]'),
-        lfSides: job.getVariableAsString('[Metadata.Text:Path="/notification/order/orderItem/orderItemPrintJob/sides",Dataset="Xml",Model="XML"]'),
-        pages: job.getVariableAsNumber('[Metadata.Text:Path="/notification/order/orderItem/orderItemPrintJob/pages",Dataset="Xml",Model="XML"]'),
-        pieceHeight: job.getVariableAsNumber('[Metadata.Text:Path="/notification/order/orderItem/orderItemPrintJob/pieceHeight",Dataset="Xml",Model="XML"]'),
-        pieceWidth: job.getVariableAsNumber('[Metadata.Text:Path="/notification/order/orderItem/orderItemPrintJob/pieceWidth",Dataset="Xml",Model="XML"]'),
-        pressSheetName: job.getVariableAsString('[Metadata.Text:Path="/notification/order/orderItem/orderItemPrintJob/pressSheet/name",Dataset="Xml",Model="XML"]'),
-        pressSheetSides: job.getVariableAsString('[Metadata.Text:Path="/notification/order/orderItem/orderItemPrintJob/pressSheet/sides",Dataset="Xml",Model="XML"]'),
-        printSub: job.getVariableAsString('[Metadata.Text:Path="/notification/order/orderItem/orderItemPrintJob/printSubstrateAProductionName",Dataset="Xml",Model="XML"]'),
-        producerSheetSize: job.getVariableAsString('[Metadata.Text:Path="/notification/sheetSize",Dataset="Xml",Model="XML"]'),
-        product: job.getVariableAsString('[Metadata.Text:Path="/notification/order/orderItem/itemProduct",Dataset="Xml",Model="XML"]'),
-        proofStatus: job.getVariableAsString('[Metadata.Text:Path="/notification/order/orderItem/itemProofStatus",Dataset="Xml",Model="XML"]'),
-        proofType: job.getVariableAsString('[Metadata.Text:Path="/notification/order/orderItem/itemProofType",Dataset="Xml",Model="XML"]'),
-        qty: job.getVariableAsNumber('[Metadata.Text:Path="/notification/order/orderItem/orderItemPrintJob/versions/item[1]/quantity",Dataset="Xml",Model="XML"]'),
-        siteName : job.getVariableAsString('[Metadata.Text:Path="/notification/workflow/sitename",Dataset="Xml",Model="XML"]'),
-        shareID: job.getVariableAsString('[Metadata.Text:Path="/notification/order/orderItem/itemShareId",Dataset="Xml",Model="XML"]'),
-        sheetHeight: job.getVariableAsString('[Metadata.Text:Path="/notification/order/orderItem/orderItemPrintJob/pressSheet/height",Dataset="Xml",Model="XML"]'),
-        sheetWidth: job.getVariableAsString('[Metadata.Text:Path="/notification/order/orderItem/orderItemPrintJob/pressSheet/width",Dataset="Xml",Model="XML"]')
-      };
-    },
-
-    loadPhoenixData: function(job) {
-      return {
-      phoenixID: job.getVariableAsString('[Metadata.Text:Path="/job/id",Dataset="Phoenix Plan",Model="XML"]'),
-      layoutCount: job.getVariableAsString('[Metadata.Text:Path="/job/layout-count",Dataset="Phoenix Plan",Model="XML"]'),
-      layoutIndex :job.getVariableAsString('[Metadata.Text:Path="/job/layouts/layout/index",Dataset="Phoenix Plan",Model="XML"]'),
-      layoutVersions :job.getVariableAsNumber('[Metadata.Text:Path="/job/layouts/layout/product-count",Dataset="Phoenix Plan",Model="XML"]'),
-      layoutRunLength :job.getVariableAsString('[Metadata.Text:Path="/job/layouts/layout/run-length",Dataset="Phoenix Plan",Model="XML"]'),
-      productPlaced :job.getVariableAsString('[Metadata.Text:Path="/job/products/product/placed",Dataset="Phoenix Plan",Model="XML"]')
-      };
-    }
-
+    getCurrentTimeStamp: getCurrentTimeStamp,
+    getGoogleID: getGoogleID,
+    loadJobData: loadJobData,
+    loadPhoenixData: loadPhoenixData
   }
 
   return returnObject;
