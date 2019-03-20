@@ -15,7 +15,9 @@ function getJobPathFromName(parsedJobName, server) {
   return jobPath;
 }
 
-function getPress(device) {
+function getPress(job) {
+  var jobData = loadJobData(job);
+  var device = jobData.device;
   var press = ''
   //Using the device location Id from the producer submit notification, this table translates the location
   if (device == "137") device = "Envelope";
@@ -42,7 +44,9 @@ function getPress(device) {
   return press;
 }
 
-function getIndigoAddress(device) {
+function getIndigoAddress(job) {
+  var jobData = loadJobData(job);
+  var device = jobData.device;
   var startPath = "//10.45.135."
   var endPath = "/Jobs/Assets/"
   var ip = ''
@@ -158,7 +162,10 @@ function getBindingEdge(operationList) {
   return bindingEdge;
 }
 
-function isFourUp(pieceWidth, pieceHeight) {
+function isFourUp(job, operationList) {
+  var jobData = loadJobData(job);
+  var pieceWidth = jobData.pieceWidth;
+  var pieceHeight = jobData.pieceHeight;
   var is4up = false;
   var bindingStyle = getBindingStyle(operationList);
   if (bindingStyle == "saddleStitch") {
@@ -172,7 +179,10 @@ function isFourUp(pieceWidth, pieceHeight) {
   return is4up;
 }
 
-function isSmallJob(pieceWidth, pieceHeight) {
+function isSmallJob(job) {
+  var jobData = loadJobData(job);
+  var pieceWidth = jobData.pieceWidth;
+  var pieceHeight = jobData.pieceHeight;
   var isSmallJob = false;
   if ((pieceHeight < 2) ||
     (pieceWidth < 2)) {
@@ -181,7 +191,10 @@ function isSmallJob(pieceWidth, pieceHeight) {
   return isSmallJob
 }
 
-function isSmallFold(pieceWidth, pieceHeight) {
+function isSmallFold(job) {
+  var jobData = loadJobData(job);
+  var pieceWidth = jobData.pieceWidth;
+  var pieceHeight = jobData.pieceHeight;
   isSmallFold = false;
   for (i = 0; i < operationList.length; i++) {
     var operation = operationList.getItem(i);
@@ -200,7 +213,10 @@ function isSmallFold(pieceWidth, pieceHeight) {
   return isSmallFold
 }
 
-function isHardProof(proofStatus, proofType) {
+function isHardProof(job) {
+  var jobData = loadJobData(job);
+  var pieceWidth = jobData.proofStatus;
+  var pieceHeight = jobData.proofType;
   var isHardProof = false;
   if ((proofType.find("Hard Proof") != -1) &&
     (proofStatus != "Approved")) {
@@ -264,7 +280,12 @@ function getTotalVersions(versionList) {
   return totalVersions
 }
 
-function getSides(pressSheetSides, coverSheetSides, lfSides, fileName) {
+function getSides(job) {
+  var jobData = loadJobData(job);
+  var pressSheetSides = jobData.pressSheetSides;
+  var coverSheetSides = jobData.coverSheetSides;
+  var lfSides = jobData.lfSides;
+  var fileName = jobData.fileName;
   var sides = '';
   if (pressSheetSides) {
     sides = pressSheetSides;
@@ -279,6 +300,8 @@ function getSides(pressSheetSides, coverSheetSides, lfSides, fileName) {
 }
 
 function getJobQuanity(qty, fileName, proofType, product, xmlPages, impoNumUp, reworkQty, lfGangGroup, operationList) {
+  var jobData = loadJobData(job);
+  var qty = jobData.qty;
   var finalQty = qty * 1.05
   var bindingStyle = getBindingStyle(operationList);
 
