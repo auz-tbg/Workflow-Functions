@@ -383,8 +383,8 @@ function getSheetSize(stockName, job) {
   var mountSub = jobData.mountSub;
   var printSub = jobData.printSub;
   var producerSheetSize = jobData.producerSheetSize;
-  var sheetHeight =jobData.sheetHeight;
-  var sheetWidth =jobData.sheetWidth;
+  var sheetHeight = jobData.sheetHeight;
+  var sheetWidth = jobData.sheetWidth;
 
   if (producerSheetSize) {
     sheetSize = producerSheetSize;
@@ -675,6 +675,23 @@ function getGoogleID(userName) {
   return googleID
 }
 
+function isBucketJob(operationList) {
+  var isBucketJob = "false";
+
+  for (i = 0; i < operationsList.length; i++) {
+    var operation = operationsList.getItem(i);
+    var operation_name = operation.evalToString("./name", null);
+    var operation_choice = operation.evalToString("./choice", null);
+
+    if (operation_name == "LF Bucket Job") {
+      if (operation_choice.find("Yes") != -1) {
+        isBucketJob = "true";
+      }
+    }
+  }
+  return isBucketJob
+}
+
 function loadJobData(job) {
   return {
     adLam: job.getVariableAsString('[Metadata.Text:Path="/notification/order/orderItem/orderItemPrintJob/adhesiveLaminateAProductionName",Dataset="Xml",Model="XML"]'),
@@ -733,6 +750,7 @@ function loadPhoenixData(job) {
     getVersionQuantity: getVersionQuantity,
     getBindingStyle: getBindingStyle,
     getBindingEdge: getBindingEdge,
+    isBucketJob: isBucketJob,
     isFourUp: isFourUp,
     isSmallJob: isSmallJob,
     isSmallFold: isSmallFold,
