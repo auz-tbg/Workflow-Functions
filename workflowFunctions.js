@@ -680,11 +680,11 @@ function isBucketJob(operationList) {
 
   for (i = 0; i < operationsList.length; i++) {
     var operation = operationsList.getItem(i);
-    var operation_name = operation.evalToString("./name", null);
-    var operation_choice = operation.evalToString("./choice", null);
+    var xmlOperationName = operation.evalToString("./name", null);
+    var xmlOperationChoice = operation.evalToString("./choice", null);
 
-    if (operation_name == "LF Bucket Job") {
-      if (operation_choice.find("Yes") != -1) {
+    if (xmlOperationName == "LF Bucket Job") {
+      if (xmlOperationChoice.find("Yes") != -1) {
         isBucketJob = "true";
       }
     }
