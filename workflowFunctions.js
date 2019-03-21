@@ -449,6 +449,7 @@ function getSheetSize(stockName, job) {
     }
   } else {
     if (printSub) {
+      var regex = /-?(\d+[X,x]\d+)-?/;
       printSub = printSub.match(regex);
       var printSubSize = regex.capturedTexts[1];
       var printSubSize1 = printSubSize.split("X");
