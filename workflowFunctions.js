@@ -235,8 +235,8 @@ function getStockType(sheetName) {
 function getTemplate(operationList) {
   var template = "undefined";
 
-  for (i = 0; i < operationsList.length; i++) {
-    var operation = operationsList.getItem(i);
+  for (i = 0; i < operationList.length; i++) {
+    var operation = operationList.getItem(i);
     var xmlOperationName = operation.evalToString("./name", null);
     var xmlOperationChoice = operation.evalToString("./choice", null)
 
