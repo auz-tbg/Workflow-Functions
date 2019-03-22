@@ -449,16 +449,13 @@ function getSheetSize(stockName, job) {
     }
   } else {
     if (printSub) {
-      var regex = /-?(\d+[X,x]\d+)-?/;
       printSub = printSub.match(regex);
       var printSubSize = regex.capturedTexts[1];
       var printSubSize1 = printSubSize.split("X");
       var printSubSizeWidth = printSubSize1[0];
-
       if (fileName.find("Window") != -1) {
         sheetSize = printSubSize;
       } else if (frontLam) {
-        frontLam.match(regex);
         var frontLamSize = regex.capturedTexts[1];
         sheetSize = frontLamSize;
       } else if (mountSub) {
@@ -585,102 +582,110 @@ function getGoogleID(userName) {
   var userKey = userName.toLowerCase().replace(' ', '');
 
   switch (userKey) {
-    case "alanstratton":
-      googleID = '105319433137268781003';
-      break;
-    case "alissadole":
-      googleID = '114108486235181002384';
-      break;
-    case "andrewoswood":
-      googleID = '100634920171074119711';
-      break;
-    case "barbyoung":
-      googleID = '117591163301022489322';
-      break;
-    case "coryfeil":
-      googleID = '109655500669959769376';
-      break;
-    case "daveyerxa":
-      googleID = '102242822331687709628';
-      break;
-    case "debangell":
-      googleID = '110577953053513546451';
-      break;
-    case "dianasammler":
-      googleID = '114824163981712422936';
-      break;
-    case "diegodiaz":
-      googleID = '116615107094393692813';
-      break;
-    case "dontewhite":
-      googleID = '113404198977414094431';
-      break;
-    case "erikotto":
-      googleID = '105356723970043743228';
-      break;
-    case "janapederson":
-      googleID = '110943842888774790056';
-      break;
-    case "jeffgolfis":
-      googleID = '103706255863768882779';
-      break;
-    case "jerryfritz":
-      googleID = '113039384763249870070';
-      break;
-    case "joekadlec":
-      googleID = '102320879515205637964';
-      break;
-    case "kellybergeron":
-      googleID = '112538674769358419382';
-      break;
-    case "keishabigelow":
-      googleID = '108902209270830568099';
-      break;
-    case "kurtpeters":
-      googleID = '109098933375591108116';
-      break;
-    case "leerogers":
-      googleID = '107695763694134037464';
-      break;
-    case "lucyworrel":
-      googleID = '103348019010473666703';
-      break;
-    case "mattblum":
-      googleID = '102722980113446282164';
-      break;
-    case "melissamorrison":
-      googleID = '113567893227891159851';
-      break;
-    case "michaelbrowning":
-      googleID = '117315350860053748946';
-      break;
-    case "renaepille":
-      googleID = '116871546140706638781';
-      break;
-    case "thomascosgrove":
-      googleID = '107301505193925122944';
-      break;
-    case "tytschumperlin":
-      googleID = '111451475544037242055';
-      break;
-    case "waynekalal":
-      googleID = '105797213364342459130';
-      break;
+  case "alanstratton":
+    googleID = '105319433137268781003';
+    break;
+  case "alissadole":
+    googleID = '114108486235181002384';
+    break;
+  case "andrewoswood":
+    googleID = '100634920171074119711';
+    break;
+  case "barbyoung":
+    googleID = '117591163301022489322';
+    break;
+  case "brendacloutier":
+    googleID = '111540185182795186848';
+    break;
+  case "coryfeil":
+    googleID = '109655500669959769376';
+    break;
+  case "danholley":
+    googleID = '112179811994858754400';
+    break;
+  case "daveyerxa":
+    googleID = '102242822331687709628';
+    break;
+  case "debangell":
+    googleID = '110577953053513546451';
+    break;
+  case "dianasammler":
+    googleID = '114824163981712422936';
+    break;
+  case "diegodiaz":
+    googleID = '116615107094393692813';
+    break;
+  case "dontewhite":
+    googleID = '113404198977414094431';
+    break;
+  case "edgarrivera":
+    googleID = '112248663302833325607';
+    break;
+  case "erikotto":
+    googleID = '105356723970043743228';
+    break;
+  case "janapederson":
+    googleID = '110943842888774790056';
+    break;
+  case "jeffgolfis":
+    googleID = '103706255863768882779';
+    break;
+  case "jerryfritz":
+    googleID = '113039384763249870070';
+    break;
+  case "joekadlec":
+    googleID = '102320879515205637964';
+    break;
+  case "kellybergeron":
+    googleID = '112538674769358419382';
+    break;
+  case "keishabigelow":
+    googleID = '108902209270830568099';
+    break;
+  case "kurtpeters":
+    googleID = '109098933375591108116';
+    break;
+  case "leerogers":
+    googleID = '107695763694134037464';
+    break;
+  case "lucyworrel":
+    googleID = '103348019010473666703';
+    break;
+  case "mattblum":
+    googleID = '102722980113446282164';
+    break;
+  case "melissamorrison":
+    googleID = '113567893227891159851';
+    break;
+  case "michaelbrowning":
+    googleID = '117315350860053748946';
+    break;
+  case "renaepille":
+    googleID = '116871546140706638781';
+    break;
+  case "thomascosgrove":
+    googleID = '107301505193925122944';
+    break;
+  case "tytschumperlin":
+    googleID = '111451475544037242055';
+    break;
+  case "waynekalal":
+    googleID = '105797213364342459130';
+    break;
 
-    default:
-      googleID = 'undefined';
-      break;
+  default:
+    googleID = 'undefined';
+    break;
 
-  }
-
-  return googleID
 }
 
+return googleID
+}
 function isBucketJob(operationList) {
   var isBucketJob = "false";
 
-  for (i = 0; i < operationsList.length; i++) {
-    var operation = operationsList.getItem(i);
+  for (i = 0; i < operationList.length; i++) {
+    var operation = operationList.getItem(i);
     var xmlOperationName = operation.evalToString("./name", null);
     var xmlOperationChoice = operation.evalToString("./choice", null);
 
@@ -701,7 +706,7 @@ function loadJobData(job) {
     coverSheetSides: job.getVariableAsString('[Metadata.Text:Path="/notification/order/orderItem/orderItemPrintJob/coverPressSheet/sides",Dataset="Xml",Model="XML"]'),
     device: job.getVariableAsString('[Metadata.Text:Path="/notification/locationId",Dataset="Xml",Model="XML"]'),
     fileName: job.getNameProper().toUpperCase(),
-    frontLam: job.getVariableAsString('[Metadata.Text:Path="/notification/order/orderItem/orderItemPrintJob/frontLaminate",Dataset="Xml",Model="XML"]'),
+    frontLam: job.getVariableAsString('[Metadata.Text:Path="/notification/order/orderItem/orderItemPrintJob/frontLaminateProductionName",Dataset="Xml",Model="XML"]'),
     impoNumUp: job.getVariableAsNumber('[Metadata.Text:Path="pdf:Subject",Dataset="Xmp",Model="XMP"]'),
     lfGangGroup: job.getPrivateData("group"),
     lfSides: job.getVariableAsString('[Metadata.Text:Path="/notification/order/orderItem/orderItemPrintJob/sides",Dataset="Xml",Model="XML"]'),
