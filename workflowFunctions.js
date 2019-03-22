@@ -299,14 +299,13 @@ function getSides(job) {
   return sides;
 }
 
-function getJobQuanity(job, operationList) {
+function getJobQuanity(job, qty, operationList) {
   var jobData = loadJobData(job);
   var fileName = jobData.fileName;
   var impoNumUp = jobData.impoNumUp;
   var lfGangGroup = jobData.impoNumUp;
   var product = jobData.product;
   var proofType = jobData.proofType;
-  var qty = jobData.qty;
   var reworkQty = jobData.reworkQty;
   var xmlPages = jobData.pages;
   var finalQty = qty * 1.05
