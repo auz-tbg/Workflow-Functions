@@ -290,7 +290,7 @@ function getStockType(sheetName) {
   return stockType
 }
 
-function getScodixType(job, operationList) {
+function getScodixType(operationList) {
   var scodixType = ''
 
   for (i = 0; i < operationList.length; i++) {
@@ -325,8 +325,7 @@ function getTemplate(operationList) {
     }
     return template;
   }
-  //Fix these variables
-  var scodixType = getScodixType(job, operationList);
+  var scodixType = getScodixType(operationList);
   var BC = job.getPrivateData("BC");
 
   if ((scodixType) &&
@@ -334,6 +333,22 @@ function getTemplate(operationList) {
     template = "ScodixBCLarge";
   }
   return template;
+}
+
+function getVariableDataType(operationList) {
+  var variableDataType = ''
+
+  for (i = 0; i < operationList.length; i++) {
+    var operation = operationList.getItem(i);
+    var xmlOperationChoice = operation.evalToString("./choice", null)
+
+    if ((xmlOperationChoice.find("Mailing") != -1) ||
+      (xmlOperationChoice.find("Variable") != -1) ||
+      (xmlOperationChoice.find("Sequential") != -1)) {
+      variableDataType = xmlOperationChoice
+    }
+  }
+  return variableDataType;
 }
 
 //get Total Versions in Job
@@ -867,6 +882,7 @@ function loadPhoenixData(job) {
     getColorMode: getColorMode,
     getStockType: getStockType,
     getTotalVersions: getTotalVersions,
+    getVariableDataType: getVariableDataType,
     getScodixType: getScodixType,
     getTemplate: getTemplate,
     getSides: getSides,
