@@ -225,6 +225,48 @@ function isHardProof(job) {
   return isHardProof;
 }
 
+function getColorMode(job) {
+  var jobData = loadJobData(job);
+  var colorMode = "G";
+  var coverSide1Ink = jobData.coverSide1Ink;
+  var coverSide2Ink = jobData.coverSide2Ink;
+  var fileName = jobData.fileName;
+  var originalColorMode = jobData.colorMode;
+  var product = jobData.product;
+  var side1Ink = jobData.side1Ink;
+  var side2Ink = jobData.side2Ink;
+
+  if (originalColorMode == "WIDE_GAMUT") {
+    colorMode = "W";
+    job.log(2, "WIDE_GAMUT: True")
+  }
+
+  //Look for Perfect Bound Book Covers
+  if ((product.find("Perfect") != -1) &&
+    (fileName.find("Cover") != -1)) {
+    //Check if the Cover Press Sheet has Black Ink only and if so, set colorMode to G
+    if (coverSide2Ink) {
+      if ((coverSide1Ink.find("Black") != -1) ||
+        (coverSide2Ink.find("Black") != -1)) {
+        colorMode = "G";
+      }
+    } else if (coverSide1Ink) {
+      if (coverSide1Ink.find("Black") != -1) {
+        colorMode = "G";
+      }
+    }
+  }
+  if (side2Ink) {
+    if ((side1Ink.find("Black") != -1) ||
+      (side2Ink.find("Black") != -1)) {
+      colorMode = "G";
+    }
+  } else if (side1Ink.find("Black") != -1) {
+    colorMode = "G";
+  }
+  return colorMode;
+}
+
 function getStockType(sheetName) {
   var stockType = "Coated"
   if (sheetName == "7139-STERLING_80#_LITHO_LABEL_WHITE") {
@@ -248,6 +290,27 @@ function getStockType(sheetName) {
   return stockType
 }
 
+function getScodixType(job, operationList) {
+  var scodixType = ''
+
+  for (i = 0; i < operationList.length; i++) {
+    var operation = operationList.getItem(i);
+    var xmlOperationChoice = operation.evalToString("./choice", null)
+
+    if ((xmlOperationChoice.find("Spot Gloss") != -1) ||
+      (xmlOperationChoice.find("Foil Stamp") != -1) ||
+      (xmlOperationChoice.find("Emboss") != -1) ||
+      (xmlOperationChoice.find("Deboss") != -1) ||
+      (xmlOperationChoice.find("Digital Gloss") != -1) ||
+      (xmlOperationChoice.find("Digital Foil") != -1) ||
+      (xmlOperationChoice.find("Digital Emboss") != -1)) {
+
+      scodixType = xmlOperationChoice;
+    }
+  }
+  return scodixType;
+}
+
 function getTemplate(operationList) {
   var template = "undefined";
 
@@ -263,10 +326,10 @@ function getTemplate(operationList) {
     return template;
   }
   //Fix these variables
-  var hasScodix = job.getPrivateData("hasScodix");
+  var scodixType = getScodixType(job, operationList);
   var BC = job.getPrivateData("BC");
 
-  if ((hasScodix) &&
+  if ((scodixType) &&
     (BC == "true")) {
     template = "ScodixBCLarge";
   }
@@ -614,6 +677,7 @@ function getGoogleID(userName) {
   var googleID = 'undefined'
   var userKey = userName.toLowerCase().replace(' ', '');
 
+
   switch (userKey) {
   case "alanstratton":
     googleID = '105319433137268781003';
@@ -735,8 +799,11 @@ function loadJobData(job) {
   return {
     adLam: job.getVariableAsString('[Metadata.Text:Path="/notification/order/orderItem/orderItemPrintJob/adhesiveLaminateAProductionName",Dataset="Xml",Model="XML"]'),
     csr: job.getVariableAsString('[Metadata.Text:Path="/notification/order/orderCSR",Dataset="Xml",Model="XML"]'),
+    colorMode : job.getVariableAsString('[Metadata.Text:Path="/notification/colorMode",Dataset="Xml",Model="XML"]'),
     coverSheetName: job.getVariableAsString('[Metadata.Text:Path="/notification/order/orderItem/orderItemPrintJob/coverPressSheet/name",Dataset="Xml",Model="XML"]'),
     coverSheetSides: job.getVariableAsString('[Metadata.Text:Path="/notification/order/orderItem/orderItemPrintJob/coverPressSheet/sides",Dataset="Xml",Model="XML"]'),
+    coverSide1Ink : job.getVariableAsString('[Metadata.Text:Path="/notification/order/orderItem/orderItemPrintJob/coverPressSheet/side1Ink",Dataset="Xml",Model="XML"]'),
+    coverSide2Ink : job.getVariableAsString('[Metadata.Text:Path="/notification/order/orderItem/orderItemPrintJob/coverPressSheet/side2Ink",Dataset="Xml",Model="XML"]'),
     device: job.getVariableAsString('[Metadata.Text:Path="/notification/locationId",Dataset="Xml",Model="XML"]'),
     fileName: job.getNameProper().toUpperCase(),
     frontLam: job.getVariableAsString('[Metadata.Text:Path="/notification/order/orderItem/orderItemPrintJob/frontLaminateProductionName",Dataset="Xml",Model="XML"]'),
@@ -756,6 +823,8 @@ function loadJobData(job) {
     proofType: job.getVariableAsString('[Metadata.Text:Path="/notification/order/orderItem/itemProofType",Dataset="Xml",Model="XML"]'),
     qty: job.getVariableAsNumber('[Metadata.Text:Path="/notification/order/orderItem/orderItemPrintJob/versions/item[1]/quantity",Dataset="Xml",Model="XML"]'),
     reworkQty : job.getPrivateData("reworkQty"),
+    side1Ink : job.getVariableAsString('[Metadata.Text:Path="/notification/order/orderItem/orderItemPrintJob/pressSheet/side1Ink",Dataset="Xml",Model="XML"]'),
+    side2Ink : job.getVariableAsString('[Metadata.Text:Path="/notification/order/orderItem/orderItemPrintJob/pressSheet/side2Ink",Dataset="Xml",Model="XML"]'),
     siteName: job.getVariableAsString('[Metadata.Text:Path="/notification/workflow/sitename",Dataset="Xml",Model="XML"]'),
     shareID: job.getVariableAsString('[Metadata.Text:Path="/notification/order/orderItem/itemShareId",Dataset="Xml",Model="XML"]'),
     sheetHeight: job.getVariableAsString('[Metadata.Text:Path="/notification/order/orderItem/orderItemPrintJob/pressSheet/height",Dataset="Xml",Model="XML"]'),
@@ -795,8 +864,10 @@ function loadPhoenixData(job) {
     isSmallJob: isSmallJob,
     isSmallFold: isSmallFold,
     isHardProof: isHardProof,
+    getColorMode: getColorMode,
     getStockType: getStockType,
     getTotalVersions: getTotalVersions,
+    getScodixType: getScodixType,
     getTemplate: getTemplate,
     getSides: getSides,
     getJobQuanity: getJobQuanity,
