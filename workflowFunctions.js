@@ -1,12 +1,28 @@
-function getOrderNumberFromName(parsedJobName) {
+//Parse the file name to get the order number
+function getOrderNumberFromName(job) {
+  var jobData = loadJobData(job);
+  var fileName = jobData.fileName;
+  var parsedJobName = fileName.split("-");
   var order = parsedJobName[0];
 
   return order;
 }
 
-function getJobPathFromName(parsedJobName, server) {
+//Parse the file name to grab order and job number. Find the job path on the server with that info.
+function getJobPathFromName(job) {
+  var jobData = loadJobData(job);
+  var fileName = jobData.fileName;
+  var parsedJobName = fileName.split("-");
   var order = parsedJobName[0];
   var jobNumber = parsedJobName[1];
+  var flowName = jobData.flowName;
+  var server = "//tbg-prod/TBG/Jobs/";
+
+  if (flowName.find("SF") != -1){
+    server = "//spdc-prod/Production/Jobs/"
+  }
+
+//search through the order folder to find the job
   var dirpath = server + order + "/";
   var dir = new Dir(dirpath);
   var folder = dir.entryList("*" + jobNumber + "*", Dir.Dirs);
@@ -39,7 +55,6 @@ function getPress(job) {
   if (device == "158") press = "Cutter 3";
   if (device == "159") press = "Cutter 4";
   if (device == "385") press = "MC";
-  //hello there
   //Return the variable to set the Private data field
   return press;
 }
@@ -821,6 +836,7 @@ function loadJobData(job) {
     coverSide2Ink : job.getVariableAsString('[Metadata.Text:Path="/notification/order/orderItem/orderItemPrintJob/coverPressSheet/side2Ink",Dataset="Xml",Model="XML"]'),
     device: job.getVariableAsString('[Metadata.Text:Path="/notification/locationId",Dataset="Xml",Model="XML"]'),
     fileName: job.getNameProper().toUpperCase(),
+    flowName: job.getVariableAsString('[Switch.FlowName]'),
     frontLam: job.getVariableAsString('[Metadata.Text:Path="/notification/order/orderItem/orderItemPrintJob/frontLaminateProductionName",Dataset="Xml",Model="XML"]'),
     impoNumUp: job.getVariableAsNumber('[Metadata.Text:Path="pdf:Subject",Dataset="Xmp",Model="XMP"]'),
     lfGangGroup: job.getPrivateData("group"),
