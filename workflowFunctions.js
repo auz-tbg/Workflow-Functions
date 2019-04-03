@@ -12,6 +12,12 @@ function getOrderNumberFromName(job) {
 function getJobPathFromName(job) {
   var jobData = loadJobData(job);
   var fileName = jobData.fileName;
+  var unGroupName = jobData.unGroupName;
+
+  if (unGroupName){
+    fileName = unGroupName;
+  }
+
   var parsedJobName = fileName.split("-");
   var order = parsedJobName[0];
   var jobNumber = parsedJobName[1];
@@ -825,15 +831,214 @@ function isBucketJob(operationList) {
   return isBucketJob
 }
 
+function getPhoenixCoverSheetMarks(job, taskList, taskListDetail){
+//Phoenix Routing Map v2.2
+//This script is common to Step & Repeat and Chop Cut configurators in Imposition Setup Phoenix
+//Also common to Booklet Imposition flow, but requires one mark swap (see below)
+//Please apply any updates to all three
+var jobData = loadJobData(job);
+var shipmentType = jobData.shipmentType;
+var singleJobShipment = jobData.singleJobShipment;
+var smallJob = isSmallJob(job);
+
+if (smallJob){
+  return
+}
+//create empty object
+var mark = {};
+
+//***COMMENT OUT MARKS ACCORDING TO FLOW***
+//Imposition Setup Phoenix flow only, comment out if Booklet Imposition:
+//Booklet Imposition flow only, comment out if Imposition Setup Phoenix:
+// mark["ProductSize v2"] = true;
+
+//***SCRIPT COMMON FROM THIS POINT FORWARD***
+mark["Product Index Number v1"] = true;
+
+//create keys and values within object
+for (i = 0; i < taskList.length; i++) {
+  var task = taskList.getItem(i);
+  var taskName = task.evalToString("./name", null);
+  var taskDetail = task.evalToString("./details/item/title", null);
+  //laminating group
+  if (taskName == "Laminate") {
+    mark["Bindery Tasks/compositeCoat"] = true;
+    if (taskDetail.find("Gloss") != -1) {
+      mark["Bindery Tasks/compositeCoatLG"] = true;
+    }
+    if (taskDetail.find("Matte") != -1) {
+      mark["Bindery Tasks/compositeCoatLM"] = true;
+    }
+    if (taskDetail.find("Other") != -1) {
+      mark["Bindery Tasks/compositeCoatLO"] = true;
+    }
+    if (taskDetail.find("Soft") != -1) {
+      mark["Bindery Tasks/compositeCoatLS"] = true;
+    }
+  }
+  //coating group
+  if (taskName == "Coat") {
+    mark["Bindery Tasks/compositeCoat"] = true;
+    if (taskDetail.find("Gloss") != -1) {
+      mark["Bindery Tasks/compositeCoatUVG"] = true;
+    }
+    if (taskDetail.find("Matte") != -1) {
+      mark["Bindery Tasks/compositeCoatUVM"] = true;
+    }
+    if (taskDetail.find("Soft") != -1) {
+      mark["Bindery Tasks/compositeCoatST"] = true;
+    }
+  }
+  //saddle stitch group, loop through item-detail-item-titles looking for square back
+  if (taskName == "Bind") {
+    mark["Bindery Tasks/compositeBinding"] = true;
+    for (j = 0; j < taskListDetail.length; j++) {
+      var taskDetail = taskListDetail.getItem(j);
+      var taskDetailTitle = taskDetail.evalToString("./title");
+      if ((taskDetailTitle == "Saddle Stitch") ||
+        (taskDetailTitle == "Calendar Saddle Stitch")) {
+        mark["Bindery Tasks/compositeSaddleStitch2"] = true;
+      }
+      if (taskDetailTitle == "Saddle Stitch with Square Back") {
+        mark["Bindery Tasks/compositeSquareBack"] = true;
+      }
+    }
+  }
+  //simple tasks
+  if (taskName == "Perfect Bind") {
+    mark["Bindery Tasks/compositeBinding"] = true;
+    mark["Bindery Tasks/compositePerfectBind"] = true;
+  }
+  if (taskName == "Magnetize") {
+    mark["Bindery Tasks/compositeMagnetize"] = true;
+    mark["Bindery Tasks/compositeMagnetize2"] = true;
+  }
+  if (taskName == "Guillotine Cut") {
+    mark["Bindery Tasks/compositeGuillotine"] = true;
+    mark["Bindery Tasks/compositeGuillotine2"] = true;
+  }
+  if (taskName == "Duplo Cut") {
+    mark["Bindery Tasks/compositeDuploCut"] = true;
+    mark["Bindery Tasks/compositeDuploCut2"] = true;
+  }
+  if (taskName == "Motion Cut") {
+    mark["Bindery Tasks/compositeMotionCut"] = true;
+    mark["Bindery Tasks/compositeMotionCut2"] = true;
+  }
+  if (taskName.find("Fold") != -1) {
+    mark["Bindery Tasks/compositeFold"] = true;
+    mark["Bindery Tasks/compositeFold2"] = true;
+  }
+  if (taskName == "Perforate") {
+    mark["Bindery Tasks/compositePerforate"] = true;
+    mark["Bindery Tasks/compositePerforate2"] = true;
+  }
+  if (taskName.find("Score") != -1) {
+    mark["Bindery Tasks/compositeFold"] = true;
+    mark["Bindery Tasks/compositeScore2"] = true;
+  }
+  if (taskName.find("Drill") != -1) {
+    mark["Bindery Tasks/compositeDrill"] = true;
+    mark["Bindery Tasks/compositeDrill2"] = true;
+  }
+  if (taskName.find("Round Corner") != -1) {
+    mark["Bindery Tasks/compositeRoundCorner"] = true;
+    mark["Bindery Tasks/compositeRoundCorner2"] = true;
+  }
+  if (taskName == "Coil Bind") {
+    mark["Bindery Tasks/compositeCoilBind"] = true;
+    mark["Bindery Tasks/compositeCoilBind2"] = true;
+  }
+  if (taskName == "Staple") {
+    mark["Bindery Tasks/compositeStaple"] = true;
+    mark["Bindery Tasks/compositeStaple2"] = true;
+  }
+  if (taskName == "Fan Apart Glue") {
+    mark["Bindery Tasks/compositePadding"] = true;
+    mark["Bindery Tasks/compositeFanApart"] = true;
+  }
+  if (taskName == "Pad") {
+    mark["Bindery Tasks/compositePadding"] = true;
+    mark["Bindery Tasks/compositePadding2"] = true;
+  }
+  if (taskName.find("Shrink Wrap") != -1) {
+    mark["Bindery Tasks/compositeShrinkWrap"] = true;
+    mark["Bindery Tasks/compositeShrinkWrap2"] = true;
+  }
+  if (taskName == "Belly Band") {
+    mark["Bindery Tasks/compositeBellyBand"] = true;
+    mark["Bindery Tasks/compositeBellyBand2"] = true;
+  }
+  if (taskName.find("Tabbing") != -1) {
+    mark["Bindery Tasks/compositeTabbing"] = true;
+    mark["Bindery Tasks/compositeTabbing2"] = true;
+  }
+  if (taskName.find("Insert") != -1) {
+    mark["Bindery Tasks/compositeInserting"] = true;
+    mark["Bindery Tasks/compositeInserting2"] = true;
+  }
+  if (taskName.find("Glue / Perf / Fold") != -1) {
+    mark["Bindery Tasks/compositeGluing"] = true;
+    mark["Bindery Tasks/compositeGluing2"] = true;
+  }
+  if (taskName.find("Kit") != -1) {
+    mark["Bindery Tasks/compositeKitting"] = true;
+    mark["Bindery Tasks/compositeKitting2"] = true;
+  }
+  if (taskName.find("Outsource") != -1) {
+    mark["Bindery Tasks/compositeOutsource"] = true;
+    mark["Bindery Tasks/compositeOutsource2"] = true;
+  }
+  if (taskName == "Special Shipping") {
+    mark["Bindery Tasks/compositeShip"] = true;
+    mark["Bindery Tasks/compositeShip2"] = true;
+  }
+  if (taskName == "Mail") {
+    mark["Bindery Tasks/compositeMail"] = true;
+    mark["Bindery Tasks/compositeMail2"] = true;
+  }
+}
+//exception: use only fold mark if both fold and score exist
+if (("Bindery Tasks/compositeFold2" in mark) && ("Bindery Tasks/compositeScore2" in mark)) {
+  mark["Bindery Tasks/compositeScore2"] = false;
+}
+//exception: if both soft touch and motion cut, change soft touch from laminate to coating
+if (("Bindery Tasks/compositeCoatLS" in mark) && ("Bindery Tasks/compositeMotionCut2" in mark)) {
+  mark["Bindery Tasks/compositeCoatLS"] = false;
+  mark["Bindery Tasks/compositeCoatST"] = true;
+  job.log(2, "Routing Map: Soft Touch Lam LS Converted to Coating ST");
+}
+
+//create array and push mark keys with value "true" into it
+var marks = [];
+for (var a in mark) {
+  if (mark[a]) marks.push(a);
+}
+//insert shipping marks at beginning of array
+if (shipmentType) {
+  marks.unshift(shipmentType);
+} else {
+  if (singleJobShipment == "True") {
+    marks.unshift("SINGLE_SHIPMENT_SINGLE_JOB");
+  } else {
+    marks.unshift("SINGLE_SHIPMENT_MULTIPLE_JOB");
+  }
+}
+
+//format array to be newline-delimited for Phoenix
+var newMark = marks.join("\n");
+return newMark;
+}
+
 function loadJobData(job) {
   return {
     adLam: job.getVariableAsString('[Metadata.Text:Path="/notification/order/orderItem/orderItemPrintJob/adhesiveLaminateAProductionName",Dataset="Xml",Model="XML"]'),
     csr: job.getVariableAsString('[Metadata.Text:Path="/notification/order/orderCSR",Dataset="Xml",Model="XML"]'),
-    colorMode : job.getVariableAsString('[Metadata.Text:Path="/notification/colorMode",Dataset="Xml",Model="XML"]'),
+    colorMode: job.getVariableAsString('[Metadata.Text:Path="/notification/colorMode",Dataset="Xml",Model="XML"]'),
     coverSheetName: job.getVariableAsString('[Metadata.Text:Path="/notification/order/orderItem/orderItemPrintJob/coverPressSheet/name",Dataset="Xml",Model="XML"]'),
     coverSheetSides: job.getVariableAsString('[Metadata.Text:Path="/notification/order/orderItem/orderItemPrintJob/coverPressSheet/sides",Dataset="Xml",Model="XML"]'),
-    coverSide1Ink : job.getVariableAsString('[Metadata.Text:Path="/notification/order/orderItem/orderItemPrintJob/coverPressSheet/side1Ink",Dataset="Xml",Model="XML"]'),
-    coverSide2Ink : job.getVariableAsString('[Metadata.Text:Path="/notification/order/orderItem/orderItemPrintJob/coverPressSheet/side2Ink",Dataset="Xml",Model="XML"]'),
+    coverSide1Ink: job.getVariableAsString('[Metadata.Text:Path="/notification/order/orderItem/orderItemPrintJob/coverPressSheet/side1Ink",Dataset="Xml",Model="XML"]'),
+    coverSide2Ink: job.getVariableAsString('[Metadata.Text:Path="/notification/order/orderItem/orderItemPrintJob/coverPressSheet/side2Ink",Dataset="Xml",Model="XML"]'),
     device: job.getVariableAsString('[Metadata.Text:Path="/notification/locationId",Dataset="Xml",Model="XML"]'),
     fileName: job.getNameProper().toUpperCase(),
     flowName: job.getVariableAsString('[Switch.FlowName]'),
@@ -841,7 +1046,9 @@ function loadJobData(job) {
     impoNumUp: job.getVariableAsNumber('[Metadata.Text:Path="pdf:Subject",Dataset="Xmp",Model="XMP"]'),
     lfGangGroup: job.getPrivateData("group"),
     lfSides: job.getVariableAsString('[Metadata.Text:Path="/notification/order/orderItem/orderItemPrintJob/sides",Dataset="Xml",Model="XML"]'),
-    mountSub: job.getVariableAsString('[Metadata.Text:Path="/notification/order/orderItem/orderItemPrintJob/mountSubstrate",Dataset="Xml",Model="XML"]'),
+    mountSub: job.getVariableAsString('[Metadata.Text:Path="/notification/order/orderItem/orderItemPrintJob/mountSubstrateProductionName",Dataset="Xml",Model="XML"]'),
+    nestName: job.getVariableAsString('[Metadata.Text:Path="/notification/nestName",Dataset="ComboXml",Model="XML"]'),
+    paceComboNumber: job.getVariableAsString('[Metadata.Text:Path="/notification/comboJob",Dataset="ComboXml",Model="XML"]'),
     pages: job.getVariableAsNumber('[Metadata.Text:Path="/notification/order/orderItem/orderItemPrintJob/pages",Dataset="Xml",Model="XML"]'),
     pieceHeight: job.getVariableAsNumber('[Metadata.Text:Path="/notification/order/orderItem/orderItemPrintJob/pieceHeight",Dataset="Xml",Model="XML"]'),
     pieceWidth: job.getVariableAsNumber('[Metadata.Text:Path="/notification/order/orderItem/orderItemPrintJob/pieceWidth",Dataset="Xml",Model="XML"]'),
@@ -853,13 +1060,16 @@ function loadJobData(job) {
     proofStatus: job.getVariableAsString('[Metadata.Text:Path="/notification/order/orderItem/itemProofStatus",Dataset="Xml",Model="XML"]'),
     proofType: job.getVariableAsString('[Metadata.Text:Path="/notification/order/orderItem/itemProofType",Dataset="Xml",Model="XML"]'),
     qty: job.getVariableAsNumber('[Metadata.Text:Path="/notification/order/orderItem/orderItemPrintJob/versions/item[1]/quantity",Dataset="Xml",Model="XML"]'),
-    reworkQty : job.getPrivateData("reworkQty"),
-    side1Ink : job.getVariableAsString('[Metadata.Text:Path="/notification/order/orderItem/orderItemPrintJob/pressSheet/side1Ink",Dataset="Xml",Model="XML"]'),
-    side2Ink : job.getVariableAsString('[Metadata.Text:Path="/notification/order/orderItem/orderItemPrintJob/pressSheet/side2Ink",Dataset="Xml",Model="XML"]'),
-    siteName: job.getVariableAsString('[Metadata.Text:Path="/notification/workflow/sitename",Dataset="Xml",Model="XML"]'),
+    reworkQty: job.getPrivateData("reworkQty"),
     shareID: job.getVariableAsString('[Metadata.Text:Path="/notification/order/orderItem/itemShareId",Dataset="Xml",Model="XML"]'),
     sheetHeight: job.getVariableAsString('[Metadata.Text:Path="/notification/order/orderItem/orderItemPrintJob/pressSheet/height",Dataset="Xml",Model="XML"]'),
-    sheetWidth: job.getVariableAsString('[Metadata.Text:Path="/notification/order/orderItem/orderItemPrintJob/pressSheet/width",Dataset="Xml",Model="XML"]')
+    sheetWidth: job.getVariableAsString('[Metadata.Text:Path="/notification/order/orderItem/orderItemPrintJob/pressSheet/width",Dataset="Xml",Model="XML"]'),
+    shipmentType: job.getVariableAsString('[Metadata.Text:Path="/notification/order/orderItem/shipmentType",Dataset="Xml",Model="XML"]'),
+    side1Ink: job.getVariableAsString('[Metadata.Text:Path="/notification/order/orderItem/orderItemPrintJob/pressSheet/side1Ink",Dataset="Xml",Model="XML"]'),
+    side2Ink: job.getVariableAsString('[Metadata.Text:Path="/notification/order/orderItem/orderItemPrintJob/pressSheet/side2Ink",Dataset="Xml",Model="XML"]'),
+    singleJobShipment: job.getVariableAsString('[Metadata.Text:Path="/notification/order/orderItem/singleJobShipment",Dataset="Xml",Model="XML"]'),
+    siteName: job.getVariableAsString('[Metadata.Text:Path="/notification/workflow/sitename",Dataset="Xml",Model="XML"]'),
+    unGroupName: job.getPrivateData("Ungroup.JobName")
   }
 }
 
@@ -910,6 +1120,7 @@ function loadPhoenixData(job) {
     getNumberDown: getNumberDown,
     getCurrentTimeStamp: getCurrentTimeStamp,
     getGoogleID: getGoogleID,
+    getPhoenixCoverSheetMarks: getPhoenixCoverSheetMarks,
     loadJobData: loadJobData,
     loadPhoenixData: loadPhoenixData
   }
