@@ -840,6 +840,11 @@ var jobData = loadJobData(job);
 var shipmentType = jobData.shipmentType;
 var singleJobShipment = jobData.singleJobShipment;
 var smallJob = isSmallJob(job);
+var pieceWidth = jobData.pieceWidth;
+var pieceHeight = jobData.pieceHeight;
+var qty = jobData.qty;
+var pages = jobData.pages;
+
 
 if (smallJob){
   return
@@ -1008,7 +1013,30 @@ if (("Bindery Tasks/compositeCoatLS" in mark) && ("Bindery Tasks/compositeMotion
   mark["Bindery Tasks/compositeCoatST"] = true;
   job.log(2, "Routing Map: Soft Touch Lam LS Converted to Coating ST");
 }
-
+//exception: use S1 if a SS Book is wider than or equal to  18.5" OR Taller than or equal to 12"
+if (("Bindery Tasks/compositeSaddleStitch2") in mark &&
+	((pieceWidth >= 18.5) ||
+	(pieceHeight >= 12))){
+	mark["Bindery Tasks/compositeSaddleStitch2"] = false;
+	mark["Bindery Tasks/compositeSaddleStitch2_1"] = true;
+}
+//exception: use S2 if a SS Book is more than 36 pages
+if (("Bindery Tasks/compositeSaddleStitch2") in mark &&
+	((pages >= 36) &&
+	 (pieceWidth < 18.5) &&
+	(pieceHeight < 12))){
+	mark["Bindery Tasks/compositeSaddleStitch2"] = false;
+	mark["Bindery Tasks/compositeSaddleStitch2_2"] = true;
+}
+//exception: use S2 if a SS Book is set up as 2up through stitcher
+if (("Bindery Tasks/compositeSaddleStitch2") in mark &&
+	((pieceHeight <=6.0) &&
+	 (pieceWidth <= 18.0) &&
+	 (pieceWidth >= pieceHeight) &&
+	 (qty >= 99))){
+	mark["Bindery Tasks/compositeSaddleStitch2"] = false;
+	mark["Bindery Tasks/compositeSaddleStitch2_2"] = true;
+}
 //create array and push mark keys with value "true" into it
 var marks = [];
 for (var a in mark) {
@@ -1029,6 +1057,7 @@ if (shipmentType) {
 var newMark = marks.join("\n");
 return newMark;
 }
+
 
 function loadJobData(job) {
   return {
