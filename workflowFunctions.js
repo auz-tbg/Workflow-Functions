@@ -1057,7 +1057,7 @@ if (shipmentType) {
 var newMark = marks.join("\n");
 return newMark;
 }
-function getLamCoatType(taskList,){
+function getLamCoatType(taskList){
 //create keys and values within object
 for (i = 0; i < taskList.length; i++) {
   var task = taskList.getItem(i);
