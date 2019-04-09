@@ -1057,8 +1057,22 @@ if (shipmentType) {
 var newMark = marks.join("\n");
 return newMark;
 }
-
-
+function getLamCoatType(taskList,){
+//create keys and values within object
+for (i = 0; i < taskList.length; i++) {
+  var task = taskList.getItem(i);
+  var taskName = task.evalToString("./name", null);
+  var taskDetail = task.evalToString("./details/item/title", null);
+  //laminating group
+  if (taskName == "Laminate") {
+    return taskDetail;
+  }
+  //coating group
+  if (taskName == "Coat") {
+    return taskDetail;
+  }
+}
+}
 function loadJobData(job) {
   return {
     adLam: job.getVariableAsString('[Metadata.Text:Path="/notification/order/orderItem/orderItemPrintJob/adhesiveLaminateAProductionName",Dataset="Xml",Model="XML"]'),
@@ -1131,6 +1145,7 @@ function loadPhoenixData(job) {
     getBindingEdge: getBindingEdge,
     isBucketJob: isBucketJob,
     isFourUp: isFourUp,
+    getLamCoatType: getLamCoatType,
     isSmallJob: isSmallJob,
     isSmallFold: isSmallFold,
     isHardProof: isHardProof,
