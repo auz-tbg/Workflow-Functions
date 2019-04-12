@@ -15,6 +15,13 @@ var operationList = notification.evalToNodes("./order/orderItem/orderItemPrintJo
 var versionList = notification.evalToNodes("./order/orderItem/orderItemPrintJob/versions/item", null);
 ///////////////////////////////////////////////////////
 
+////////////////Load Phoenix Product List////////////////////
+var phoenixPlanXML = new Document(job.getDataset("Phoenix Plan").getPath());
+var notification = phoenixPlanXML.getDocumentElement();
+var products = notification.evalToNodes("/job/products/product", null);
+////////////////Load Phoenix Product List////////////////////
+
+
 //////////////////Operation Nodes//////////////////////
 var xmlOperationName = operation.evalToString("./name", null);
 var xmlOperationChoice = operation.evalToString("./choice", null);
