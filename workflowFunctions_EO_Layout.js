@@ -1129,6 +1129,38 @@ for (i = 0; i < taskList.length; i++) {
   }
 }
 }
+
+function getImpoSizeForGang(job) {
+  var jobData = loadJobData(job);
+  var mediaBoxWidth = (jobData.mediaBoxWidth) / 72;
+  var sheetWidthDots = mediaBoxWidth + 1.02;
+  var mediaBoxHeight = (jobData.mediaBoxHeight) / 72;
+  var sheetHeightDots = mediaBoxHeight + 1.52;
+  var sheetWidthFinal = Math.ceil(sheetWidthDots);
+  var sheetHeightFinal = Math.ceil(sheetHeightDots);
+  if (sheetWidthFinal < 28) {
+    sheetWidthFinal = 28
+  }
+  var size = sheetWidthFinal + "x" + sheetHeightFinal;
+
+  return size;
+}
+
+function getModeForLFGangProdLaser(hotfolder, modeRetail, mode){
+var jobData = loadJobData(job);
+var group = jobData.lfGangGroup;
+if (hotfolder == "Target-Styrene-08pass-Gloss07-60x120-zcc"){
+	mode = "Gloss 07%";
+}
+else if (modeRetail){
+	mode = modeRetail;
+}
+else{
+  mode = "";
+}
+return mode;
+}
+
 function loadJobData(job) {
   return {
     adLam: job.getVariableAsString('[Metadata.Text:Path="/notification/order/orderItem/orderItemPrintJob/adhesiveLaminateAProductionName",Dataset="Xml",Model="XML"]'),
@@ -1145,6 +1177,8 @@ function loadJobData(job) {
     impoNumUp: job.getVariableAsNumber('[Metadata.Text:Path="pdf:Subject",Dataset="Xmp",Model="XMP"]'),
     lfGangGroup: job.getPrivateData("group"),
     lfSides: job.getVariableAsString('[Metadata.Text:Path="/notification/order/orderItem/orderItemPrintJob/sides",Dataset="Xml",Model="XML"]'),
+    mediaBoxHeight: job.getVariableAsNumber('[Stats.MediaBoxHeight]'),
+    mediaBoxWidth: job.getVariableAsNumber('[Stats.MediaBoxWidth]'),
     mountSub: job.getVariableAsString('[Metadata.Text:Path="/notification/order/orderItem/orderItemPrintJob/mountSubstrateProductionName",Dataset="Xml",Model="XML"]'),
     nestName: job.getVariableAsString('[Metadata.Text:Path="/notification/nestName",Dataset="ComboXml",Model="XML"]'),
     paceComboNumber: job.getVariableAsString('[Metadata.Text:Path="/notification/comboJob",Dataset="ComboXml",Model="XML"]'),
@@ -1175,12 +1209,12 @@ function loadJobData(job) {
 function loadPhoenixData(job) {
   return {
     phoenixID: job.getVariableAsString('[Metadata.Text:Path="/job/id",Dataset="Phoenix Plan",Model="XML"]'),
-    layoutCount: job.getVariableAsString('[Metadata.Text:Path="/job/layout-count",Dataset="Phoenix Plan",Model="XML"]'),
-    layoutIndex: job.getVariableAsString('[Metadata.Text:Path="/job/layouts/layout/index",Dataset="Phoenix Plan",Model="XML"]'),
+    layoutCount: job.getVariableAsNumber('[Metadata.Text:Path="/job/layout-count",Dataset="Phoenix Plan",Model="XML"]'),
+    layoutIndex: job.getVariableAsNumber('[Metadata.Text:Path="/job/layouts/layout/index",Dataset="Phoenix Plan",Model="XML"]'),
     layoutVersions: job.getVariableAsNumber('[Metadata.Text:Path="/job/layouts/layout/product-count",Dataset="Phoenix Plan",Model="XML"]'),
-    layoutRunLength: job.getVariableAsString('[Metadata.Text:Path="/job/layouts/layout/run-length",Dataset="Phoenix Plan",Model="XML"]'),
+    layoutRunLength: job.getVariableAsNumber('[Metadata.Text:Path="/job/layouts/layout/run-length",Dataset="Phoenix Plan",Model="XML"]'),
     productPlaced: job.getVariableAsString('[Metadata.Text:Path="/job/products/product/placed",Dataset="Phoenix Plan",Model="XML"]')
-  };
+  }
 }
 
 (function() {
@@ -1207,6 +1241,8 @@ function loadPhoenixData(job) {
     isHardProof: isHardProof,
     getColorMode: getColorMode,
     getStockType: getStockType,
+    getImpoSizeForGang: getImpoSizeForGang,
+    getModeForLFGangProdLaser: getModeForLFGangProdLaser,
     getTotalJobsForGangPWAssemble: getTotalJobsForGangPWAssemble,
     getTotalVersions: getTotalVersions,
     getVariableDataType: getVariableDataType,
