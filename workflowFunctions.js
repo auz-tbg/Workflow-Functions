@@ -498,15 +498,16 @@ function getJobQuanity(job, qty, operationList) {
   return finalQty;
 }
 
-function getSheetSize(stockName, job) {
+function getSheetSize(stockName, job, operationList) {
   var jobData = loadJobData(job);
-  var sheetSize = 'undefined'
+  var sheetSize = "";
   var shareID = jobData.shareID;
   var uhgProduct = getUHGProduct(job);
   var regex = /-?(\d+[X,x]\d+)-?/;
   var adLam = jobData.adLam;
   var fileName = jobData.fileName;
   var frontLam = jobData.frontLam;
+  var sfLamWidth = "";
   var lfGangGroup = jobData.lfGangGroup;
   var mountSub = jobData.mountSub;
   var printSub = jobData.printSub;
@@ -517,9 +518,7 @@ function getSheetSize(stockName, job) {
   if (producerSheetSize) {
     sheetSize = producerSheetSize;
     return sheetSize
-  }
-
-  if (lfGangGroup) {
+  } else if (lfGangGroup) {
     if (lfGangGroup == "UHG") {
       sheetSize = "50X100";
       if (uhgProduct == "Car Magnet") {
@@ -575,36 +574,74 @@ function getSheetSize(stockName, job) {
       }
       return sheetSize
     }
-  } else {
-    if (printSub) {
-      printSub = printSub.match(regex);
-      var printSubSize = regex.capturedTexts[1];
-      var printSubSize1 = printSubSize.split("X");
-      var printSubSizeWidth = printSubSize1[0];
-      if (fileName.find("Window") != -1) {
-        sheetSize = printSubSize;
-      } else if (frontLam) {
-        var frontLamSize = regex.capturedTexts[1];
-        sheetSize = frontLamSize;
-      } else if (mountSub) {
-        mountSub.match(regex);
-        var mountSubSize = regex.capturedTexts[1].split("X");
-        var mountSubSizeWidth = mountSubSize[0];
-        var mountSubSizeHeight = mountSubSize[1];
-        sheetWidth = Math.min(printSubSizeWidth, mountSubSizeWidth);
-        sheetSize = sheetWidth + "X119";
-        if (adLam) {
-          if (adLam == "Bronze Adhesive Lam") {
-            sheetSize = "43X119";
-          }
-          return sheetSize;
-        }
-      } else sheetSize = printSubSize;
-      return sheetSize;
-    } else {
-      sheetSize = sheetWidth.replace(".0", "") + "X" + sheetHeight.replace(".0", "");
+  } else if (printSub) {
+    printSub = printSub.match(regex);
+    var printSubSize = regex.capturedTexts[1];
+    var printSubSize1 = printSubSize.split("X");
+    var printSubSizeWidth = printSubSize1[0];
+    if (fileName.find("Window") != -1) {
+      sheetSize = printSubSize;
     }
+    else if (frontLam) {
+      var frontLamSize = regex.capturedTexts[1];
+      sheetSize = frontLamSize;
+    }
+    else if (mountSub) {
+      mountSub.match(regex);
+      var mountSubSize = regex.capturedTexts[1].split("X");
+      var mountSubSizeWidth = mountSubSize[0];
+      sheetWidth = Math.min(printSubSizeWidth, mountSubSizeWidth);
+      sheetSize = sheetWidth + "X119";
+      if (adLam) {
+        if (adLam == "Bronze Adhesive Lam") {
+          sheetSize = "43X119";
+        }
+        return sheetSize;
+      }
+    }
+    else sheetSize = printSubSize;
     return sheetSize;
+  } else {
+    for (i = 0; i < operationList.length; i++) {
+      var operation = operationList.getItem(i);
+      var xmlOperationItem = operation.evalToString("./item", null);
+      var xmlOperationName = operation.evalToString("./name", null);
+      var xmlOperationChoice = operation.evalToString("./choice", null);
+      var lamResult = "";
+      var lamRegEx = /_(\d+)/g
+      var mountRegEx = /_(\d+X\d+)/g
+      if (xmlOperationName == "LF Pre-Printing Front Laminate") {
+        lamResult = xmlOperationChoice.match(lamRegEx);
+        sfLamWidth = lamResult.replace("_", "");
+        sheetSize = sfLamWidth + "X" + sheetHeight.replace(".0", "");
+        return sheetSize;
+      } else if (xmlOperationName == "LF Pre-Printing Front Laminate") {
+        lamResult = xmlOperationChoice.match(lamRegEx);
+        sfLamWidth = lamResult.replace("_", "");
+        sheetSize = sfLamWidth + "X" + sheetHeight.replace(".0", "");
+        return sheetSize;
+      } else if (xmlOperationName == "LF Front Laminating") {
+        lamResult = xmlOperationChoice.match(lamRegEx)
+        sfLamWidth = lamResult.replace("_", "");
+        sheetSize = sfLamWidth + "X" + sheetHeight.replace(".0", "");
+        return sheetSize;
+      } else if (xmlOperationName == "LF Back Laminating") {
+        lamResult = xmlOperationChoice.match(lamRegEx)
+        sfLamWidth = lamResult.replace("_", "");
+        sheetSize = sfLamWidth + "X" + sheetHeight.replace(".0", "");
+        return sheetSize;
+      } else if (xmlOperationName.find("LF Mounting") != -1) {
+        var mountSize = xmlOperationChoice.match(mountRegEx).replace("_", "");
+        var mountWidth = mountSize.split("X")[0];
+        sheetWidth = Math.min(sheetWidth.replace(".0", ""), mountWidth);
+        sheetSize = sheetWidth + "X" + sheetHeight
+        return sheetSize;
+      }
+    }
+      if (sheetSize == "") {
+        sheetSize = sheetWidth.replace(".0", "") + "X" + sheetHeight.replace(".0", "");
+        return sheetSize;
+      }
   }
   return sheetSize;
 }
