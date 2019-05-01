@@ -851,6 +851,62 @@ function getGoogleID(userName) {
 
 return googleID
 }
+
+function getTotalJobsForGangPWAssemble(products, job) {
+  var phoenixData = loadPhoenixData(job);
+  var jobData = loadJobData(job);
+  var fileName = jobData.fileName
+  var newLayoutNumber = 1
+  var totalJobs = 1;
+  for (i = 0; i < products.length; i++) {
+    var productName = products.getItem(i).evalToString("./name", null);
+    var layoutNumber = products.getItem(i).evalToString("./layouts/layout/@index", null);
+
+    if (productName == fileName) {
+      newLayoutNumber = layoutNumber;
+
+      var notification = new Document(job.getDataset("Phoenix Plan").getPath());
+      var layout = notification.evalToNodes("/job/layouts/layout", null);
+
+      for (j = 0; j < layout.length; j++) {
+        var layoutIndex = layout.getItem(j).evalToString("./index", null);
+
+        if (newLayoutNumber == layoutIndex) {
+          totalJobs = layout.getItem(j).evalToNumber("./product-count", null) + 1;
+        }
+      }
+    }
+  }
+  return totalJobs
+}
+
+function getLayoutNumber(products, totalVersions, job) {
+  var phoenixData = loadPhoenixData(job);
+  var jobData = loadJobData(job);
+  var fileName = jobData.fileName
+  var phoenixID = phoenixData.phoenixID
+  var newLayoutNumber = null;
+  for (i = 0; i < products.length; i++) {
+    var productName = products.getItem(i).evalToString("./name", null);
+    var layoutNumber = products.getItem(i).evalToString("./layouts/layout/@index", null);
+    var fileName = job.getNameProper();
+    if ((totalVersions > 1) && (productName.find("-Set") == -1)) {
+      fileName += " - 1";
+    }
+    if (productName.replace("-Set - 1", "") == fileName) {
+      newLayoutNumber = layoutNumber;
+    }
+    if (productName.replace("-Set", "") == fileName) {
+      newLayoutNumber = layoutNumber;
+    }
+  }
+  newLayoutNumber = parseFloat(newLayoutNumber);
+  if (newLayoutNumber < 10) {
+    newLayoutNumber = "0" + newLayoutNumber;
+  }
+  return newLayoutNumber
+}
+
 function isBucketJob(operationList) {
   var isBucketJob = "false";
 
@@ -1110,6 +1166,62 @@ for (i = 0; i < taskList.length; i++) {
   }
 }
 }
+
+function getTotalJobsForGangPWAssemble(products, job) {
+  var phoenixData = loadPhoenixData(job);
+  var jobData = loadJobData(job);
+  var fileName = jobData.fileName
+  var newLayoutNumber = 1
+  var totalJobs = 1;
+  for (i = 0; i < products.length; i++) {
+    var productName = products.getItem(i).evalToString("./name", null);
+    var layoutNumber = products.getItem(i).evalToString("./layouts/layout/@index", null);
+
+    if (productName == fileName) {
+      newLayoutNumber = layoutNumber;
+
+      var notification = new Document(job.getDataset("Phoenix Plan").getPath());
+      var layout = notification.evalToNodes("/job/layouts/layout", null);
+
+      for (j = 0; j < layout.length; j++) {
+        var layoutIndex = layout.getItem(j).evalToString("./index", null);
+
+        if (newLayoutNumber == layoutIndex) {
+          totalJobs = layout.getItem(j).evalToNumber("./product-count", null) + 1;
+        }
+      }
+    }
+  }
+  return totalJobs
+}
+
+function getLayoutNumber(products, totalVersions, job) {
+  var phoenixData = loadPhoenixData(job);
+  var jobData = loadJobData(job);
+  var fileName = jobData.fileName
+  var phoenixID = phoenixData.phoenixID
+  var newLayoutNumber = null;
+  for (i = 0; i < products.length; i++) {
+    var productName = products.getItem(i).evalToString("./name", null);
+    var layoutNumber = products.getItem(i).evalToString("./layouts/layout/@index", null);
+    var fileName = job.getNameProper();
+    if ((totalVersions > 1) && (productName.find("-Set") == -1)) {
+      fileName += " - 1";
+    }
+    if (productName.replace("-Set - 1", "") == fileName) {
+      newLayoutNumber = layoutNumber;
+    }
+    if (productName.replace("-Set", "") == fileName) {
+      newLayoutNumber = layoutNumber;
+    }
+  }
+  newLayoutNumber = parseFloat(newLayoutNumber);
+  if (newLayoutNumber < 10) {
+    newLayoutNumber = "0" + newLayoutNumber;
+  }
+  return newLayoutNumber
+}
+
 function loadJobData(job) {
   return {
     adLam: job.getVariableAsString('[Metadata.Text:Path="/notification/order/orderItem/orderItemPrintJob/adhesiveLaminateAProductionName",Dataset="Xml",Model="XML"]'),
