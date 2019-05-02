@@ -1180,9 +1180,11 @@ function getImpoSizeForGang(job) {
   return size;
 }
 
-function getModeForLFGangProdLaser(hotfolder, modeRetail, mode) {
+function getModeForLFGangProdLaser(job) {
   var jobData = loadJobData(job);
-  var group = jobData.lfGangGroup;
+  var mode = jobData.mode;
+  var modeRetail = jobData.modeRetail;
+  var hotfoder = jobData.hotfolder;
   if (hotfolder == "Target-Styrene-08pass-Gloss07-60x120-zcc") {
     mode = "Gloss 07%";
   }
@@ -1208,11 +1210,14 @@ function loadJobData(job) {
     fileName: job.getNameProper().toUpperCase(),
     flowName: job.getVariableAsString('[Switch.FlowName]'),
     frontLam: job.getVariableAsString('[Metadata.Text:Path="/notification/order/orderItem/orderItemPrintJob/frontLaminateProductionName",Dataset="Xml",Model="XML"]'),
+    hotfolder: job.getPrivateData("hotfolder"),
     impoNumUp: job.getVariableAsNumber('[Metadata.Text:Path="pdf:Subject",Dataset="Xmp",Model="XMP"]'),
     lfGangGroup: job.getPrivateData("group"),
     lfSides: job.getVariableAsString('[Metadata.Text:Path="/notification/order/orderItem/orderItemPrintJob/sides",Dataset="Xml",Model="XML"]'),
     mediaBoxHeight: job.getVariableAsNumber('[Stats.MediaBoxHeight]'),
     mediaBoxWidth: job.getVariableAsNumber('[Stats.MediaBoxWidth]'),
+    mode: job.getPrivateData("mode"),
+    modeRetail: job.getVariableAsString('[Metadata.Text:Path="pdf:Author",Dataset="Xmp",Model="XMP"]'),
     mountSub: job.getVariableAsString('[Metadata.Text:Path="/notification/order/orderItem/orderItemPrintJob/mountSubstrateProductionName",Dataset="Xml",Model="XML"]'),
     nestName: job.getVariableAsString('[Metadata.Text:Path="/notification/nestName",Dataset="ComboXml",Model="XML"]'),
     paceComboNumber: job.getVariableAsString('[Metadata.Text:Path="/notification/comboJob",Dataset="ComboXml",Model="XML"]'),
