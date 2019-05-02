@@ -1184,7 +1184,7 @@ function getModeForLFGangProdLaser(job) {
   var jobData = loadJobData(job);
   var mode = jobData.mode;
   var modeRetail = jobData.modeRetail;
-  var hotfoder = jobData.hotfolder;
+  var hotfolder = jobData.hotfolder;
   if (hotfolder == "Target-Styrene-08pass-Gloss07-60x120-zcc") {
     mode = "Gloss 07%";
   }
