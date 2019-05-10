@@ -1186,12 +1186,12 @@ function getModeForLFGangProdLaser(job) {
   return mode;
 }
 
-function getWoodshopOperation(job, operationsList) {
+function getWoodshopOperation(job, operationList) {
   var jobData = loadJobData(job);
   var fileName = jobData.fileName;
   var woodshopOperation = '';
   //loop through the Operation Names
-  for (i = 0; i < operationsList.length; i++) {
+  for (i = 0; i < operationList.length; i++) {
     var operation = operationsList.getItem(i);
     var xmlOperationName = operation.evalToString("./name", null);
     var xmlOperationChoice = operation.evalToString("./choice", null);
