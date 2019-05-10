@@ -747,7 +747,8 @@ function getElaspsedTime(startTime) {
 }
 
 function getGoogleID(userName) {
-  var googleID = 'undefined'
+  var googleID = 'undefined';
+  var googleWebhook '';
   var userKey = userName.toLowerCase().replace(' ', '');
 
 
@@ -793,6 +794,7 @@ function getGoogleID(userName) {
     break;
   case "erikotto":
     googleID = '105356723970043743228';
+    googleWebhook = 'https://chat.googleapis.com/v1/spaces/xo7kRAAAAAE/messages?key=AIzaSyDdI0hCZtE6vySjMm-WEfRq3CPzqKqqsHI&token=MBf_OOyZsz4UaOIaSTb2n0Gg8pIoofKD6bCp4pqmzmY%3D';
     break;
   case "janapederson":
     googleID = '110943842888774790056';
@@ -1184,6 +1186,32 @@ function getModeForLFGangProdLaser(job) {
   return mode;
 }
 
+function getWoodshopOperation(job, operationsList) {
+  var jobData = loadJobData(job);
+  var fileName = jobData.fileName;
+  var woodshopOperation = '';
+  //loop through the Operation Names
+  for (i = 0; i < operationsList.length; i++) {
+    var operation = operationsList.getItem(i);
+    var xmlOperationName = operation.evalToString("./name", null);
+    var xmlOperationChoice = operation.evalToString("./choice", null);
+    //any Operation Name that has the following is true
+    if ((xmlOperationName == "Wood Dowels") ||
+      (xmlOperationName == "TBG Canvas Frame Assembly") ||
+      (xmlOperationName == "Stretch Frame") ||
+      (xmlOperationName == "TBG Dowels")) {
+      woodshopOperation = xmlOperationName
+    }
+    //check if the Operation Choice contaions "no frame" and exclude those files
+    if ((xmlOperationChoice.find("no frame") != -1) ||
+      (fileName.find("999999") != -1)) {
+      woodshopOperation = ''
+    }
+  }
+
+  return woodshopOperation;
+}
+
 function loadJobData(job) {
   return {
     adLam: job.getVariableAsString('[Metadata.Text:Path="/notification/order/orderItem/orderItemPrintJob/adhesiveLaminateAProductionName",Dataset="Xml",Model="XML"]'),
@@ -1281,9 +1309,11 @@ function loadPhoenixData(job) {
     getNumberDown: getNumberDown,
     getCurrentTimeStamp: getCurrentTimeStamp,
     getGoogleID: getGoogleID,
+    getElaspsedTime: getElaspsedTime,
     getPhoenixCoverSheetMarks: getPhoenixCoverSheetMarks,
     loadJobData: loadJobData,
-    loadPhoenixData: loadPhoenixData
+    loadPhoenixData: loadPhoenixData,
+    getWoodshopOperation: getWoodshopOperation
   }
 
   return returnObject;
