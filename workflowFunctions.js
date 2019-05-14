@@ -748,7 +748,7 @@ function getElaspsedTime(startTime) {
 
 function getGoogleID(userName) {
   var googleID = 'undefined';
-  var googleWebhook '';
+  var googleWebhook = '';
   var userKey = userName.toLowerCase().replace(' ', '');
 
 
