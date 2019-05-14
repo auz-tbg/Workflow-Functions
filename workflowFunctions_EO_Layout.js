@@ -1,4 +1,4 @@
-fileName//Parse the file name to get the order number
+//Parse the file name to get the order number
 function getOrderNumberFromName(job) {
   var jobData = loadJobData(job);
   var fileName = jobData.fileName;
