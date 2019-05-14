@@ -1,4 +1,4 @@
-//Parse the file name to get the order number
+fileName//Parse the file name to get the order number
 function getOrderNumberFromName(job) {
   var jobData = loadJobData(job);
   var fileName = jobData.fileName;
@@ -14,7 +14,7 @@ function getJobPathFromName(job) {
   var fileName = jobData.fileName;
   var unGroupName = jobData.unGroupName;
 
-  if (unGroupName) {
+  if (unGroupName){
     fileName = unGroupName;
   }
 
@@ -24,11 +24,11 @@ function getJobPathFromName(job) {
   var flowName = jobData.flowName;
   var server = "//tbg-prod/TBG/Jobs/";
 
-  if (flowName.find("SF") != -1) {
+  if (flowName.find("SF") != -1){
     server = "//spdc-prod/Production/Jobs/"
   }
 
-  //search through the order folder to find the job
+//search through the order folder to find the job
   var dirpath = server + order + "/";
   var dir = new Dir(dirpath);
   var folder = dir.entryList("*" + jobNumber + "*", Dir.Dirs);
@@ -221,10 +221,13 @@ function isSmallFold(job) {
     var operation = operationList.getItem(i);
     var xmlOperationItem = operation.evalToString("./item", null);
     var xmlOperationName = operation.evalToString("./name", null);
+
     if (((xmlOperationName.find("Score") != -1) ||
-      (xmlOperationName.find("Fold") != -1)) &&
+        (xmlOperationName.find("Fold") != -1)) &&
       ((pieceWidth <= 4.5) ||
-        (pieceHeight <= 4.5))) {
+        (pieceHeight <= 4.5)))
+
+    {
       isSmallFold = true
     }
   }
@@ -399,7 +402,7 @@ function getJobQuanity(job, qty, operationList) {
   var jobData = loadJobData(job);
   var fileName = jobData.fileName;
   var impoNumUp = jobData.impoNumUp;
-  var lfGangGroup = jobData.lfGangGroup;
+  var lfGangGroup = jobData.impoNumUp;
   var product = jobData.product;
   var proofType = jobData.proofType;
   var reworkQty = jobData.reworkQty;
@@ -744,109 +747,372 @@ function getElaspsedTime(startTime) {
 }
 
 function getGoogleID(userName) {
-  var googleID = 'undefined'
+  var googleID = 'undefined';
+  var googleWebhook '';
   var userKey = userName.toLowerCase().replace(' ', '');
 
 
   switch (userKey) {
-    case "alanstratton":
-      googleID = '105319433137268781003';
-      break;
-    case "alissadole":
-      googleID = '114108486235181002384';
-      break;
-    case "andrewoswood":
-      googleID = '100634920171074119711';
-      break;
-    case "barbyoung":
-      googleID = '117591163301022489322';
-      break;
-    case "brendacloutier":
-      googleID = '111540185182795186848';
-      break;
-    case "coryfeil":
-      googleID = '109655500669959769376';
-      break;
-    case "danholley":
-      googleID = '112179811994858754400';
-      break;
-    case "daveyerxa":
-      googleID = '102242822331687709628';
-      break;
-    case "debangell":
-      googleID = '110577953053513546451';
-      break;
-    case "dianasammler":
-      googleID = '114824163981712422936';
-      break;
-    case "diegodiaz":
-      googleID = '116615107094393692813';
-      break;
-    case "dontewhite":
-      googleID = '113404198977414094431';
-      break;
-    case "edgarrivera":
-      googleID = '112248663302833325607';
-      break;
-    case "erikotto":
-      googleID = '105356723970043743228';
-      break;
-    case "janapederson":
-      googleID = '110943842888774790056';
-      break;
-    case "jeffgolfis":
-      googleID = '103706255863768882779';
-      break;
-    case "jerryfritz":
-      googleID = '113039384763249870070';
-      break;
-    case "joekadlec":
-      googleID = '102320879515205637964';
-      break;
-    case "kellybergeron":
-      googleID = '112538674769358419382';
-      break;
-    case "keishabigelow":
-      googleID = '108902209270830568099';
-      break;
-    case "kurtpeters":
-      googleID = '109098933375591108116';
-      break;
-    case "leerogers":
-      googleID = '107695763694134037464';
-      break;
-    case "lucyworrel":
-      googleID = '103348019010473666703';
-      break;
-    case "mattblum":
-      googleID = '102722980113446282164';
-      break;
-    case "melissamorrison":
-      googleID = '113567893227891159851';
-      break;
-    case "michaelbrowning":
-      googleID = '117315350860053748946';
-      break;
-    case "renaepille":
-      googleID = '116871546140706638781';
-      break;
-    case "thomascosgrove":
-      googleID = '107301505193925122944';
-      break;
-    case "tytschumperlin":
-      googleID = '111451475544037242055';
-      break;
-    case "waynekalal":
-      googleID = '105797213364342459130';
-      break;
+  case "alanstratton":
+    googleID = '105319433137268781003';
+    break;
+  case "alissadole":
+    googleID = '114108486235181002384';
+    break;
+  case "andrewoswood":
+    googleID = '100634920171074119711';
+    break;
+  case "barbyoung":
+    googleID = '117591163301022489322';
+    break;
+  case "brendacloutier":
+    googleID = '111540185182795186848';
+    break;
+  case "coryfeil":
+    googleID = '109655500669959769376';
+    break;
+  case "danholley":
+    googleID = '112179811994858754400';
+    break;
+  case "daveyerxa":
+    googleID = '102242822331687709628';
+    break;
+  case "debangell":
+    googleID = '110577953053513546451';
+    break;
+  case "dianasammler":
+    googleID = '114824163981712422936';
+    break;
+  case "diegodiaz":
+    googleID = '116615107094393692813';
+    break;
+  case "dontewhite":
+    googleID = '113404198977414094431';
+    break;
+  case "edgarrivera":
+    googleID = '112248663302833325607';
+    break;
+  case "erikotto":
+    googleID = '105356723970043743228';
+    googleWebhook = 'https://chat.googleapis.com/v1/spaces/xo7kRAAAAAE/messages?key=AIzaSyDdI0hCZtE6vySjMm-WEfRq3CPzqKqqsHI&token=MBf_OOyZsz4UaOIaSTb2n0Gg8pIoofKD6bCp4pqmzmY%3D';
+    break;
+  case "janapederson":
+    googleID = '110943842888774790056';
+    break;
+  case "jeffgolfis":
+    googleID = '103706255863768882779';
+    break;
+  case "jerryfritz":
+    googleID = '113039384763249870070';
+    break;
+  case "joekadlec":
+    googleID = '102320879515205637964';
+    break;
+  case "kellybergeron":
+    googleID = '112538674769358419382';
+    break;
+  case "keishabigelow":
+    googleID = '108902209270830568099';
+    break;
+  case "kurtpeters":
+    googleID = '109098933375591108116';
+    break;
+  case "leerogers":
+    googleID = '107695763694134037464';
+    break;
+  case "lucyworrel":
+    googleID = '103348019010473666703';
+    break;
+  case "mattblum":
+    googleID = '102722980113446282164';
+    break;
+  case "melissamorrison":
+    googleID = '113567893227891159851';
+    break;
+  case "michaelbrowning":
+    googleID = '117315350860053748946';
+    break;
+  case "renaepille":
+    googleID = '116871546140706638781';
+    break;
+  case "thomascosgrove":
+    googleID = '107301505193925122944';
+    break;
+  case "tytschumperlin":
+    googleID = '111451475544037242055';
+    break;
+  case "waynekalal":
+    googleID = '105797213364342459130';
+    break;
 
-    default:
-      googleID = 'undefined';
-      break;
+  default:
+    googleID = 'undefined';
+    break;
 
+}
+
+return googleID
+}
+
+function isBucketJob(operationList) {
+  var isBucketJob = "false";
+
+  for (i = 0; i < operationList.length; i++) {
+    var operation = operationList.getItem(i);
+    var xmlOperationName = operation.evalToString("./name", null);
+    var xmlOperationChoice = operation.evalToString("./choice", null);
+
+    if (xmlOperationName == "LF Bucket Job") {
+      if (xmlOperationChoice.find("Yes") != -1) {
+        isBucketJob = "true";
+      }
+    }
   }
+  return isBucketJob
+}
 
-  return googleID
+function getPhoenixCoverSheetMarks(job, taskList, taskListDetail){
+//Phoenix Routing Map v2.2
+//This script is common to Step & Repeat and Chop Cut configurators in Imposition Setup Phoenix
+//Also common to Booklet Imposition flow, but requires one mark swap (see below)
+//Please apply any updates to all three
+var jobData = loadJobData(job);
+var shipmentType = jobData.shipmentType;
+var singleJobShipment = jobData.singleJobShipment;
+var smallJob = isSmallJob(job);
+var pieceWidth = jobData.pieceWidth;
+var pieceHeight = jobData.pieceHeight;
+var qty = jobData.qty;
+var pages = jobData.pages;
+
+
+if (smallJob){
+  return
+}
+//create empty object
+var mark = {};
+
+//***COMMENT OUT MARKS ACCORDING TO FLOW***
+//Imposition Setup Phoenix flow only, comment out if Booklet Imposition:
+//Booklet Imposition flow only, comment out if Imposition Setup Phoenix:
+// mark["ProductSize v2"] = true;
+
+//***SCRIPT COMMON FROM THIS POINT FORWARD***
+mark["Product Index Number v1"] = true;
+
+//create keys and values within object
+for (i = 0; i < taskList.length; i++) {
+  var task = taskList.getItem(i);
+  var taskName = task.evalToString("./name", null);
+  var taskDetail = task.evalToString("./details/item/title", null);
+  //laminating group
+  if (taskName == "Laminate") {
+    mark["Bindery Tasks/compositeCoat"] = true;
+    if (taskDetail.find("Gloss") != -1) {
+      mark["Bindery Tasks/compositeCoatLG"] = true;
+    }
+    if (taskDetail.find("Matte") != -1) {
+      mark["Bindery Tasks/compositeCoatLM"] = true;
+    }
+    if (taskDetail.find("Other") != -1) {
+      mark["Bindery Tasks/compositeCoatLO"] = true;
+    }
+    if (taskDetail.find("Soft") != -1) {
+      mark["Bindery Tasks/compositeCoatLS"] = true;
+    }
+  }
+  //coating group
+  if (taskName == "Coat") {
+    mark["Bindery Tasks/compositeCoat"] = true;
+    if (taskDetail.find("Gloss") != -1) {
+      mark["Bindery Tasks/compositeCoatUVG"] = true;
+    }
+    if (taskDetail.find("Matte") != -1) {
+      mark["Bindery Tasks/compositeCoatUVM"] = true;
+    }
+    if (taskDetail.find("Soft") != -1) {
+      mark["Bindery Tasks/compositeCoatST"] = true;
+    }
+  }
+  //saddle stitch group, loop through item-detail-item-titles looking for square back
+  if (taskName == "Bind") {
+    mark["Bindery Tasks/compositeBinding"] = true;
+    for (j = 0; j < taskListDetail.length; j++) {
+      var taskDetail = taskListDetail.getItem(j);
+      var taskDetailTitle = taskDetail.evalToString("./title");
+      if ((taskDetailTitle == "Saddle Stitch") ||
+        (taskDetailTitle == "Calendar Saddle Stitch")) {
+        mark["Bindery Tasks/compositeSaddleStitch2"] = true;
+      }
+      if (taskDetailTitle == "Saddle Stitch with Square Back") {
+        mark["Bindery Tasks/compositeSquareBack"] = true;
+      }
+    }
+  }
+  //simple tasks
+  if (taskName == "Perfect Bind") {
+    mark["Bindery Tasks/compositeBinding"] = true;
+    mark["Bindery Tasks/compositePerfectBind"] = true;
+  }
+  if (taskName == "Magnetize") {
+    mark["Bindery Tasks/compositeMagnetize"] = true;
+    mark["Bindery Tasks/compositeMagnetize2"] = true;
+  }
+  if (taskName == "Guillotine Cut") {
+    mark["Bindery Tasks/compositeGuillotine"] = true;
+    mark["Bindery Tasks/compositeGuillotine2"] = true;
+  }
+  if (taskName == "Duplo Cut") {
+    mark["Bindery Tasks/compositeDuploCut"] = true;
+    mark["Bindery Tasks/compositeDuploCut2"] = true;
+  }
+  if (taskName == "Motion Cut") {
+    mark["Bindery Tasks/compositeMotionCut"] = true;
+    mark["Bindery Tasks/compositeMotionCut2"] = true;
+  }
+  if (taskName.find("Fold") != -1) {
+    mark["Bindery Tasks/compositeFold"] = true;
+    mark["Bindery Tasks/compositeFold2"] = true;
+  }
+  if (taskName == "Perforate") {
+    mark["Bindery Tasks/compositePerforate"] = true;
+    mark["Bindery Tasks/compositePerforate2"] = true;
+  }
+  if (taskName.find("Score") != -1) {
+    mark["Bindery Tasks/compositeFold"] = true;
+    mark["Bindery Tasks/compositeScore2"] = true;
+  }
+  if (taskName.find("Drill") != -1) {
+    mark["Bindery Tasks/compositeDrill"] = true;
+    mark["Bindery Tasks/compositeDrill2"] = true;
+  }
+  if (taskName.find("Round Corner") != -1) {
+    mark["Bindery Tasks/compositeRoundCorner"] = true;
+    mark["Bindery Tasks/compositeRoundCorner2"] = true;
+  }
+  if (taskName == "Coil Bind") {
+    mark["Bindery Tasks/compositeCoilBind"] = true;
+    mark["Bindery Tasks/compositeCoilBind2"] = true;
+  }
+  if (taskName == "Staple") {
+    mark["Bindery Tasks/compositeStaple"] = true;
+    mark["Bindery Tasks/compositeStaple2"] = true;
+  }
+  if (taskName == "Fan Apart Glue") {
+    mark["Bindery Tasks/compositePadding"] = true;
+    mark["Bindery Tasks/compositeFanApart"] = true;
+  }
+  if (taskName == "Pad") {
+    mark["Bindery Tasks/compositePadding"] = true;
+    mark["Bindery Tasks/compositePadding2"] = true;
+  }
+  if (taskName.find("Shrink Wrap") != -1) {
+    mark["Bindery Tasks/compositeShrinkWrap"] = true;
+    mark["Bindery Tasks/compositeShrinkWrap2"] = true;
+  }
+  if (taskName == "Belly Band") {
+    mark["Bindery Tasks/compositeBellyBand"] = true;
+    mark["Bindery Tasks/compositeBellyBand2"] = true;
+  }
+  if (taskName.find("Tabbing") != -1) {
+    mark["Bindery Tasks/compositeTabbing"] = true;
+    mark["Bindery Tasks/compositeTabbing2"] = true;
+  }
+  if (taskName.find("Insert") != -1) {
+    mark["Bindery Tasks/compositeInserting"] = true;
+    mark["Bindery Tasks/compositeInserting2"] = true;
+  }
+  if (taskName.find("Glue / Perf / Fold") != -1) {
+    mark["Bindery Tasks/compositeGluing"] = true;
+    mark["Bindery Tasks/compositeGluing2"] = true;
+  }
+  if (taskName.find("Kit") != -1) {
+    mark["Bindery Tasks/compositeKitting"] = true;
+    mark["Bindery Tasks/compositeKitting2"] = true;
+  }
+  if (taskName.find("Outsource") != -1) {
+    mark["Bindery Tasks/compositeOutsource"] = true;
+    mark["Bindery Tasks/compositeOutsource2"] = true;
+  }
+  if (taskName == "Special Shipping") {
+    mark["Bindery Tasks/compositeShip"] = true;
+    mark["Bindery Tasks/compositeShip2"] = true;
+  }
+  if (taskName == "Mail") {
+    mark["Bindery Tasks/compositeMail"] = true;
+    mark["Bindery Tasks/compositeMail2"] = true;
+  }
+}
+//exception: use only fold mark if both fold and score exist
+if (("Bindery Tasks/compositeFold2" in mark) && ("Bindery Tasks/compositeScore2" in mark)) {
+  mark["Bindery Tasks/compositeScore2"] = false;
+}
+//exception: if both soft touch and motion cut, change soft touch from laminate to coating
+if (("Bindery Tasks/compositeCoatLS" in mark) && ("Bindery Tasks/compositeMotionCut2" in mark)) {
+  mark["Bindery Tasks/compositeCoatLS"] = false;
+  mark["Bindery Tasks/compositeCoatST"] = true;
+  job.log(2, "Routing Map: Soft Touch Lam LS Converted to Coating ST");
+}
+//exception: use S1 if a SS Book is wider than or equal to  18.5" OR Taller than or equal to 12"
+if (("Bindery Tasks/compositeSaddleStitch2") in mark &&
+	((pieceWidth >= 18.5) ||
+	(pieceHeight >= 12))){
+	mark["Bindery Tasks/compositeSaddleStitch2"] = false;
+	mark["Bindery Tasks/compositeSaddleStitch2_1"] = true;
+}
+//exception: use S2 if a SS Book is more than 36 pages
+if (("Bindery Tasks/compositeSaddleStitch2") in mark &&
+	((pages >= 36) &&
+	 (pieceWidth < 18.5) &&
+	(pieceHeight < 12))){
+	mark["Bindery Tasks/compositeSaddleStitch2"] = false;
+	mark["Bindery Tasks/compositeSaddleStitch2_2"] = true;
+}
+//exception: use S2 if a SS Book is set up as 2up through stitcher
+if (("Bindery Tasks/compositeSaddleStitch2") in mark &&
+	((pieceHeight <=6.0) &&
+	 (pieceWidth <= 18.0) &&
+	 (pieceWidth >= pieceHeight) &&
+	 (qty >= 99))){
+	mark["Bindery Tasks/compositeSaddleStitch2"] = false;
+	mark["Bindery Tasks/compositeSaddleStitch2_2"] = true;
+}
+//create array and push mark keys with value "true" into it
+var marks = [];
+for (var a in mark) {
+  if (mark[a]) marks.push(a);
+}
+//insert shipping marks at beginning of array
+if (shipmentType) {
+  marks.unshift(shipmentType);
+} else {
+  if (singleJobShipment == "True") {
+    marks.unshift("SINGLE_SHIPMENT_SINGLE_JOB");
+  } else {
+    marks.unshift("SINGLE_SHIPMENT_MULTIPLE_JOB");
+  }
+}
+
+//format array to be newline-delimited for Phoenix
+var newMark = marks.join("\n");
+return newMark;
+}
+
+function getLamCoatType(taskList){
+//create keys and values within object
+for (i = 0; i < taskList.length; i++) {
+  var task = taskList.getItem(i);
+  var taskName = task.evalToString("./name", null);
+  var taskDetail = task.evalToString("./details/item/title", null);
+  //laminating group
+  if (taskName == "Laminate") {
+    return taskDetail;
+  }
+  //coating group
+  if (taskName == "Coat") {
+    return taskDetail;
+  }
+}
 }
 
 function getTotalJobsForGangPWAssemble(products, job) {
@@ -904,282 +1170,6 @@ function getLayoutNumber(products, totalVersions, job) {
   return newLayoutNumber
 }
 
-function isBucketJob(operationList) {
-  var isBucketJob = "false";
-
-  for (i = 0; i < operationList.length; i++) {
-    var operation = operationList.getItem(i);
-    var xmlOperationName = operation.evalToString("./name", null);
-    var xmlOperationChoice = operation.evalToString("./choice", null);
-
-    if (xmlOperationName == "LF Bucket Job") {
-      if (xmlOperationChoice.find("Yes") != -1) {
-        isBucketJob = "true";
-      }
-    }
-  }
-  return isBucketJob
-}
-
-function getPhoenixCoverSheetMarks(job, taskList, taskListDetail) {
-  //Phoenix Routing Map v2.2
-  //This script is common to Step & Repeat and Chop Cut configurators in Imposition Setup Phoenix
-  //Also common to Booklet Imposition flow, but requires one mark swap (see below)
-  //Please apply any updates to all three
-  var jobData = loadJobData(job);
-  var shipmentType = jobData.shipmentType;
-  var singleJobShipment = jobData.singleJobShipment;
-  var smallJob = isSmallJob(job);
-  var pieceWidth = jobData.pieceWidth;
-  var pieceHeight = jobData.pieceHeight;
-  var qty = jobData.qty;
-  var pages = jobData.pages;
-
-
-  if (smallJob) {
-    return
-  }
-  //create empty object
-  var mark = {};
-
-  //***COMMENT OUT MARKS ACCORDING TO FLOW***
-  //Imposition Setup Phoenix flow only, comment out if Booklet Imposition:
-  //Booklet Imposition flow only, comment out if Imposition Setup Phoenix:
-  // mark["ProductSize v2"] = true;
-
-  //***SCRIPT COMMON FROM THIS POINT FORWARD***
-  mark["Product Index Number v1"] = true;
-
-  //create keys and values within object
-  for (i = 0; i < taskList.length; i++) {
-    var task = taskList.getItem(i);
-    var taskName = task.evalToString("./name", null);
-    var taskDetail = task.evalToString("./details/item/title", null);
-    //laminating group
-    if (taskName == "Laminate") {
-      mark["Bindery Tasks/compositeCoat"] = true;
-      if (taskDetail.find("Gloss") != -1) {
-        mark["Bindery Tasks/compositeCoatLG"] = true;
-      }
-      if (taskDetail.find("Matte") != -1) {
-        mark["Bindery Tasks/compositeCoatLM"] = true;
-      }
-      if (taskDetail.find("Other") != -1) {
-        mark["Bindery Tasks/compositeCoatLO"] = true;
-      }
-      if (taskDetail.find("Soft") != -1) {
-        mark["Bindery Tasks/compositeCoatLS"] = true;
-      }
-    }
-    //coating group
-    if (taskName == "Coat") {
-      mark["Bindery Tasks/compositeCoat"] = true;
-      if (taskDetail.find("Gloss") != -1) {
-        mark["Bindery Tasks/compositeCoatUVG"] = true;
-      }
-      if (taskDetail.find("Matte") != -1) {
-        mark["Bindery Tasks/compositeCoatUVM"] = true;
-      }
-      if (taskDetail.find("Soft") != -1) {
-        mark["Bindery Tasks/compositeCoatST"] = true;
-      }
-    }
-    //saddle stitch group, loop through item-detail-item-titles looking for square back
-    if (taskName == "Bind") {
-      mark["Bindery Tasks/compositeBinding"] = true;
-      for (j = 0; j < taskListDetail.length; j++) {
-        var taskDetail = taskListDetail.getItem(j);
-        var taskDetailTitle = taskDetail.evalToString("./title");
-        if ((taskDetailTitle == "Saddle Stitch") ||
-          (taskDetailTitle == "Calendar Saddle Stitch")) {
-          mark["Bindery Tasks/compositeSaddleStitch2"] = true;
-        }
-        if (taskDetailTitle == "Saddle Stitch with Square Back") {
-          mark["Bindery Tasks/compositeSquareBack"] = true;
-        }
-      }
-    }
-    //simple tasks
-    if (taskName == "Perfect Bind") {
-      mark["Bindery Tasks/compositeBinding"] = true;
-      mark["Bindery Tasks/compositePerfectBind"] = true;
-    }
-    if (taskName == "Magnetize") {
-      mark["Bindery Tasks/compositeMagnetize"] = true;
-      mark["Bindery Tasks/compositeMagnetize2"] = true;
-    }
-    if (taskName == "Guillotine Cut") {
-      mark["Bindery Tasks/compositeGuillotine"] = true;
-      mark["Bindery Tasks/compositeGuillotine2"] = true;
-    }
-    if (taskName == "Duplo Cut") {
-      mark["Bindery Tasks/compositeDuploCut"] = true;
-      mark["Bindery Tasks/compositeDuploCut2"] = true;
-    }
-    if (taskName == "Motion Cut") {
-      mark["Bindery Tasks/compositeMotionCut"] = true;
-      mark["Bindery Tasks/compositeMotionCut2"] = true;
-    }
-    if (taskName.find("Fold") != -1) {
-      mark["Bindery Tasks/compositeFold"] = true;
-      mark["Bindery Tasks/compositeFold2"] = true;
-    }
-    if (taskName == "Perforate") {
-      mark["Bindery Tasks/compositePerforate"] = true;
-      mark["Bindery Tasks/compositePerforate2"] = true;
-    }
-    if (taskName.find("Score") != -1) {
-      mark["Bindery Tasks/compositeFold"] = true;
-      mark["Bindery Tasks/compositeScore2"] = true;
-    }
-    if (taskName.find("Drill") != -1) {
-      mark["Bindery Tasks/compositeDrill"] = true;
-      mark["Bindery Tasks/compositeDrill2"] = true;
-    }
-    if (taskName.find("Round Corner") != -1) {
-      mark["Bindery Tasks/compositeRoundCorner"] = true;
-      mark["Bindery Tasks/compositeRoundCorner2"] = true;
-    }
-    if (taskName == "Coil Bind") {
-      mark["Bindery Tasks/compositeCoilBind"] = true;
-      mark["Bindery Tasks/compositeCoilBind2"] = true;
-    }
-    if (taskName == "Staple") {
-      mark["Bindery Tasks/compositeStaple"] = true;
-      mark["Bindery Tasks/compositeStaple2"] = true;
-    }
-    if (taskName == "Fan Apart Glue") {
-      mark["Bindery Tasks/compositePadding"] = true;
-      mark["Bindery Tasks/compositeFanApart"] = true;
-    }
-    if (taskName == "Pad") {
-      mark["Bindery Tasks/compositePadding"] = true;
-      mark["Bindery Tasks/compositePadding2"] = true;
-    }
-    if (taskName.find("Shrink Wrap") != -1) {
-      mark["Bindery Tasks/compositeShrinkWrap"] = true;
-      mark["Bindery Tasks/compositeShrinkWrap2"] = true;
-    }
-    if (taskName == "Belly Band") {
-      mark["Bindery Tasks/compositeBellyBand"] = true;
-      mark["Bindery Tasks/compositeBellyBand2"] = true;
-    }
-    if (taskName.find("Tabbing") != -1) {
-      mark["Bindery Tasks/compositeTabbing"] = true;
-      mark["Bindery Tasks/compositeTabbing2"] = true;
-    }
-    if (taskName.find("Insert") != -1) {
-      mark["Bindery Tasks/compositeInserting"] = true;
-      mark["Bindery Tasks/compositeInserting2"] = true;
-    }
-    if (taskName.find("Glue / Perf / Fold") != -1) {
-      mark["Bindery Tasks/compositeGluing"] = true;
-      mark["Bindery Tasks/compositeGluing2"] = true;
-    }
-    if (taskName.find("Kit") != -1) {
-      mark["Bindery Tasks/compositeKitting"] = true;
-      mark["Bindery Tasks/compositeKitting2"] = true;
-    }
-    if (taskName.find("Outsource") != -1) {
-      mark["Bindery Tasks/compositeOutsource"] = true;
-      mark["Bindery Tasks/compositeOutsource2"] = true;
-    }
-    if (taskName == "Special Shipping") {
-      mark["Bindery Tasks/compositeShip"] = true;
-      mark["Bindery Tasks/compositeShip2"] = true;
-    }
-    if (taskName == "Mail") {
-      mark["Bindery Tasks/compositeMail"] = true;
-      mark["Bindery Tasks/compositeMail2"] = true;
-    }
-  }
-  //exception: use only fold mark if both fold and score exist
-  if (("Bindery Tasks/compositeFold2" in mark) && ("Bindery Tasks/compositeScore2" in mark)) {
-    mark["Bindery Tasks/compositeScore2"] = false;
-  }
-  //exception: if both soft touch and motion cut, change soft touch from laminate to coating
-  if (("Bindery Tasks/compositeCoatLS" in mark) && ("Bindery Tasks/compositeMotionCut2" in mark)) {
-    mark["Bindery Tasks/compositeCoatLS"] = false;
-    mark["Bindery Tasks/compositeCoatST"] = true;
-    job.log(2, "Routing Map: Soft Touch Lam LS Converted to Coating ST");
-  }
-  //exception: use S1 if a SS Book is wider than or equal to  18.5" OR Taller than or equal to 12"
-  if (("Bindery Tasks/compositeSaddleStitch2") in mark &&
-    ((pieceWidth >= 18.5) ||
-      (pieceHeight >= 12))) {
-    mark["Bindery Tasks/compositeSaddleStitch2"] = false;
-    mark["Bindery Tasks/compositeSaddleStitch2_1"] = true;
-  }
-  //exception: use S2 if a SS Book is more than 36 pages
-  if (("Bindery Tasks/compositeSaddleStitch2") in mark &&
-    ((pages >= 36) &&
-      (pieceWidth < 18.5) &&
-      (pieceHeight < 12))) {
-    mark["Bindery Tasks/compositeSaddleStitch2"] = false;
-    mark["Bindery Tasks/compositeSaddleStitch2_2"] = true;
-  }
-  //exception: use S2 if a SS Book is set up as 2up through stitcher
-  if (("Bindery Tasks/compositeSaddleStitch2") in mark &&
-    ((pieceHeight <= 6.0) &&
-      (pieceWidth <= 18.0) &&
-      (pieceWidth >= pieceHeight) &&
-      (qty >= 99))) {
-    mark["Bindery Tasks/compositeSaddleStitch2"] = false;
-    mark["Bindery Tasks/compositeSaddleStitch2_2"] = true;
-  }
-  //create array and push mark keys with value "true" into it
-  var marks = [];
-  for (var a in mark) {
-    if (mark[a]) marks.push(a);
-  }
-  //insert shipping marks at beginning of array
-  if (shipmentType) {
-    marks.unshift(shipmentType);
-  } else {
-    if (singleJobShipment == "True") {
-      marks.unshift("SINGLE_SHIPMENT_SINGLE_JOB");
-    } else {
-      marks.unshift("SINGLE_SHIPMENT_MULTIPLE_JOB");
-    }
-  }
-
-  //format array to be newline-delimited for Phoenix
-  var newMark = marks.join("\n");
-  return newMark;
-}
-function getLamCoatType(taskList) {
-  //create keys and values within object
-  for (i = 0; i < taskList.length; i++) {
-    var task = taskList.getItem(i);
-    var taskName = task.evalToString("./name", null);
-    var taskDetail = task.evalToString("./details/item/title", null);
-    //laminating group
-    if (taskName == "Laminate") {
-      return taskDetail;
-    }
-    //coating group
-    if (taskName == "Coat") {
-      return taskDetail;
-    }
-  }
-}
-
-function getImpoSizeForGang(job) {
-  var jobData = loadJobData(job);
-  var mediaBoxWidth = (jobData.mediaBoxWidth) / 72;
-  var sheetWidthDots = mediaBoxWidth + 1.02;
-  var mediaBoxHeight = (jobData.mediaBoxHeight) / 72;
-  var sheetHeightDots = mediaBoxHeight + 1.52;
-  var sheetWidthFinal = Math.ceil(sheetWidthDots);
-  var sheetHeightFinal = Math.ceil(sheetHeightDots);
-  if (sheetWidthFinal < 28) {
-    sheetWidthFinal = 28
-  }
-  var size = sheetWidthFinal + "x" + sheetHeightFinal;
-
-  return size;
-}
-
 function getModeForLFGangProdLaser(job) {
   var jobData = loadJobData(job);
   var mode = jobData.mode;
@@ -1197,6 +1187,156 @@ function getModeForLFGangProdLaser(job) {
   return mode;
 }
 
+function getWoodshopOperation(job, operationList) {
+  var jobData = loadJobData(job);
+  var fileName = jobData.fileName;
+  var woodshopOperation = '';
+  //loop through the Operation Names
+  for (i = 0; i < operationList.length; i++) {
+    var operation = operationsList.getItem(i);
+    var xmlOperationName = operation.evalToString("./name", null);
+    var xmlOperationChoice = operation.evalToString("./choice", null);
+    //any Operation Name that has the following is true
+    if ((xmlOperationName == "Wood Dowels") ||
+      (xmlOperationName == "TBG Canvas Frame Assembly") ||
+      (xmlOperationName == "Stretch Frame") ||
+      (xmlOperationName == "TBG Dowels")) {
+      woodshopOperation = xmlOperationName
+    }
+    //check if the Operation Choice contaions "no frame" and exclude those files
+    if ((xmlOperationChoice.find("no frame") != -1) ||
+      (fileName.find("999999") != -1)) {
+      woodshopOperation = ''
+    }
+  }
+
+  return woodshopOperation;
+}
+
+function getMotionCutStyle(job, operationList) {
+  var MCStyle = "none";
+  var jobData = loadJobData(job);
+  var press = jobData.press;
+
+  for (i = 0; i < operationList.length; i++) {
+    var operation = operationList.getItem(i);
+    var xmlOperationChoice = operation.evalToString("./choice", null);
+    var xmlOperationName = operation.evalToString("./name", null);
+
+    if ((xmlOperationName.find("Motion") != -1) ||
+      (xmlOperationName.find("Perforat") != -1) ||
+      (xmlOperationName.find("Crease") != -1) ||
+      (xmlOperationName.find("Etch") != -1) ||
+      (xmlOperationName.find("Die") != -1) ||
+      (xmlOperationName.find("Kiss-Cut") != -1) ||
+      (xmlOperationChoice.find("Motion") != -1) ||
+      (xmlOperationChoice.find("Perforat") != -1) ||
+      (xmlOperationChoice.find("Crease") != -1) ||
+      (xmlOperationChoice.find("Etch") != -1) ||
+      (xmlOperationChoice.find("Die") != -1) ||
+      (xmlOperationChoice.find("Kiss-Cut") != -1) ||
+      (press == "MC")) {
+      MCStyle = "motionCut"
+    }
+    if (xmlOperationChoice.find("ComplexDesign") != -1) {
+      MCStyle = "complexMotionCut";
+    }
+    return MCStyle;
+  }
+
+function sfCopies(job, operationList, taskList) {
+  var jobData = loadJobData(job);
+  var fileName = jobData.fileName;
+  var bindingStyle = getBindingStyle(operationList);
+  var variable = jobData.variable;
+  var MCStyle = getMotionCutStyle(job, operationList);
+  var numberOfPages = jobData.filePageCount;
+  var sides = getSides(job);
+  var Copies = job.getVariableAsNumber('[Job.PrivateData:Key="quantity"]');
+
+  //If job contains Laminating increase 5 sheets
+  for (i = 0; i < taskList.length; i++) {
+    var tasks = taskList.getItem(i);
+    var xmlTaskName = tasks.evalToString("./name", null);
+    var xmlTaskDetail = tasks.evalToString("./details/item/title", null);
+    if (xmlTaskName.find("Laminating") != -1) {
+      if (sides == 1) {
+        if (numberOfPages <= 5) {
+          Copies = Copies + Math.ceil(5 / numberOfPages);
+        } else Copies += 1;
+      }
+      if (sides == 2) {
+        if (numberOfPages <= 10) {
+          Copies = Copies + Math.ceil(5 / (numberOfPages / 2));
+        } else Copies += 1;
+      }
+
+      //Remove sheet increase on Interior pgs if Cover Only exists
+      if ((xmlTaskName.find("CoverOnly") != -1) &&
+        (fileName.find("Interior") != -1)) {
+        if (sides == 1) {
+          if (numberOfPages <= 5) {
+            Copies = Copies - Math.ceil(5 / numberOfPages);
+          } else Copies -= 1;
+        }
+        if (sides == 2) {
+          if (numberOfPages <= 10) {
+            Copies = Copies - Math.ceil(5 / (numberOfPages / 2));
+          } else Copies -= 1;
+        }
+      }
+    }
+    //If job contains Coating increase 10 sheets
+    if (xmlTaskName.find("Coating") != -1) {
+      if (sides == 1) {
+        if (numberOfPages <= 10) {
+          Copies = Copies + Math.ceil(10 / numberOfPages);
+        } else Copies += 1;
+      }
+      if (sides == 2) {
+        if (numberOfPages <= 20) {
+          Copies = Copies + Math.ceil(10 / (numberOfPages / 2));
+        } else Copies += 1;
+      }
+
+      //Remove sheet increase on Interior pgs if Cover Only exists
+      if ((xmlTaskName.find("CoverOnly") != -1) &&
+        (fileName.find("Interior") != -1)) {
+        if (sides == 1) {
+          if (numberOfPages <= 10) {
+            Copies = Copies - Math.ceil(10 / numberOfPages);
+          } else Copies -= 1;
+        }
+        if (sides == 2) {
+          if (numberOfPages <= 20) {
+            Copies = Copies - Math.ceil(10 / (numberOfPages / 2));
+          } else Copies -= 1;
+        }
+      }
+    }
+  }
+  //Motion cutting files reset quantity to 5 sheets
+  if (MCStyle == "motionCut") {
+    Copies = 5;
+  }
+  //Complex Motion cutting increases an additional 5 sheets
+  if (MCStyle == "complexMotionCut") {
+      Copies += 5;
+  }
+  //Proof Ticket file reset quantity to 1 sheet
+  if (fileName.find("-PT-") != -1) {
+    Copies = Math.ceil(quantity / 250);
+    } else {
+      Copies = 1;
+    }
+  }
+  //Variable job resets quanity to 1 sheet
+  if (variable == "true") {
+    Copies = 1;
+  }
+
+return Copies;
+  }
 function loadJobData(job) {
   return {
     adLam: job.getVariableAsString('[Metadata.Text:Path="/notification/order/orderItem/orderItemPrintJob/adhesiveLaminateAProductionName",Dataset="Xml",Model="XML"]'),
@@ -1214,12 +1354,11 @@ function loadJobData(job) {
     impoNumUp: job.getVariableAsNumber('[Metadata.Text:Path="pdf:Subject",Dataset="Xmp",Model="XMP"]'),
     lfGangGroup: job.getPrivateData("group"),
     lfSides: job.getVariableAsString('[Metadata.Text:Path="/notification/order/orderItem/orderItemPrintJob/sides",Dataset="Xml",Model="XML"]'),
-    mediaBoxHeight: job.getVariableAsNumber('[Stats.MediaBoxHeight]'),
-    mediaBoxWidth: job.getVariableAsNumber('[Stats.MediaBoxWidth]'),
     mode: job.getPrivateData("mode"),
     modeRetail: job.getVariableAsString('[Metadata.Text:Path="pdf:Author",Dataset="Xmp",Model="XMP"]'),
     mountSub: job.getVariableAsString('[Metadata.Text:Path="/notification/order/orderItem/orderItemPrintJob/mountSubstrateProductionName",Dataset="Xml",Model="XML"]'),
     nestName: job.getVariableAsString('[Metadata.Text:Path="/notification/nestName",Dataset="ComboXml",Model="XML"]'),
+    filePageCount: job.getVariableAsNumber('[Stats.NumberOfPages]'),
     paceComboNumber: job.getVariableAsString('[Metadata.Text:Path="/notification/comboJob",Dataset="ComboXml",Model="XML"]'),
     pages: job.getVariableAsNumber('[Metadata.Text:Path="/notification/order/orderItem/orderItemPrintJob/pages",Dataset="Xml",Model="XML"]'),
     pieceHeight: job.getVariableAsNumber('[Metadata.Text:Path="/notification/order/orderItem/orderItemPrintJob/pieceHeight",Dataset="Xml",Model="XML"]'),
@@ -1241,22 +1380,23 @@ function loadJobData(job) {
     side2Ink: job.getVariableAsString('[Metadata.Text:Path="/notification/order/orderItem/orderItemPrintJob/pressSheet/side2Ink",Dataset="Xml",Model="XML"]'),
     singleJobShipment: job.getVariableAsString('[Metadata.Text:Path="/notification/order/orderItem/singleJobShipment",Dataset="Xml",Model="XML"]'),
     siteName: job.getVariableAsString('[Metadata.Text:Path="/notification/workflow/sitename",Dataset="Xml",Model="XML"]'),
-    unGroupName: job.getPrivateData("Ungroup.JobName")
+    unGroupName: job.getPrivateData("Ungroup.JobName"),
+    variable: job.getPrivateData("variable")
   }
 }
 
 function loadPhoenixData(job) {
   return {
     phoenixID: job.getVariableAsString('[Metadata.Text:Path="/job/id",Dataset="Phoenix Plan",Model="XML"]'),
-    layoutCount: job.getVariableAsNumber('[Metadata.Text:Path="/job/layout-count",Dataset="Phoenix Plan",Model="XML"]'),
-    layoutIndex: job.getVariableAsNumber('[Metadata.Text:Path="/job/layouts/layout/index",Dataset="Phoenix Plan",Model="XML"]'),
+    layoutCount: job.getVariableAsString('[Metadata.Text:Path="/job/layout-count",Dataset="Phoenix Plan",Model="XML"]'),
+    layoutIndex: job.getVariableAsString('[Metadata.Text:Path="/job/layouts/layout/index",Dataset="Phoenix Plan",Model="XML"]'),
     layoutVersions: job.getVariableAsNumber('[Metadata.Text:Path="/job/layouts/layout/product-count",Dataset="Phoenix Plan",Model="XML"]'),
-    layoutRunLength: job.getVariableAsNumber('[Metadata.Text:Path="/job/layouts/layout/run-length",Dataset="Phoenix Plan",Model="XML"]'),
+    layoutRunLength: job.getVariableAsString('[Metadata.Text:Path="/job/layouts/layout/run-length",Dataset="Phoenix Plan",Model="XML"]'),
     productPlaced: job.getVariableAsString('[Metadata.Text:Path="/job/products/product/placed",Dataset="Phoenix Plan",Model="XML"]')
-  }
+  };
 }
 
-(function () {
+(function() {
   /**
    Returns an object to eval()
 
@@ -1279,10 +1419,9 @@ function loadPhoenixData(job) {
     isSmallFold: isSmallFold,
     isHardProof: isHardProof,
     getColorMode: getColorMode,
+    getLayoutNumber:getLayoutNumber,
     getStockType: getStockType,
-    getImpoSizeForGang: getImpoSizeForGang,
-    getModeForLFGangProdLaser: getModeForLFGangProdLaser,
-    getTotalJobsForGangPWAssemble: getTotalJobsForGangPWAssemble,
+    getTotalJobsForGangPWAssemble:getTotalJobsForGangPWAssemble,
     getTotalVersions: getTotalVersions,
     getVariableDataType: getVariableDataType,
     getScodixType: getScodixType,
@@ -1292,14 +1431,18 @@ function loadPhoenixData(job) {
     getSheetSize: getSheetSize,
     getCustomBookletType: getCustomBookletType,
     getUHGProduct: getUHGProduct,
+    getModeForLFGangProdLaser:getModeForLFGangProdLaser,
     getNumberAcross: getNumberAcross,
     getNumberDown: getNumberDown,
     getCurrentTimeStamp: getCurrentTimeStamp,
     getGoogleID: getGoogleID,
+    getElaspsedTime: getElaspsedTime,
     getPhoenixCoverSheetMarks: getPhoenixCoverSheetMarks,
     loadJobData: loadJobData,
     loadPhoenixData: loadPhoenixData,
-    getLayoutNumber: getLayoutNumber
+    getWoodshopOperation: getWoodshopOperation,
+    getMotionCutStyle: getMotionCutStyle,
+    sfCopies: sfCopies
   }
 
   return returnObject;
