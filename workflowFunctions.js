@@ -1192,7 +1192,7 @@ function getWoodshopOperation(job, operationList) {
   var woodshopOperation = '';
   //loop through the Operation Names
   for (i = 0; i < operationList.length; i++) {
-    var operation = operationsList.getItem(i);
+    var operation = operationList.getItem(i);
     var xmlOperationName = operation.evalToString("./name", null);
     var xmlOperationChoice = operation.evalToString("./choice", null);
     //any Operation Name that has the following is true
