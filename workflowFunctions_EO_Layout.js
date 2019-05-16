@@ -1315,7 +1315,7 @@ function sfCopies(job, operationList, taskList, quantity) {
   }
   //Motion cutting files reset quantity to 5 sheets
   if (MCStyle == "motionCut") {
-    Copies = 5;
+    Copies += 5;
   }
   //Complex Motion cutting increases an additional 5 sheets
   if (MCStyle == "complexMotionCut") {
@@ -1324,8 +1324,12 @@ function sfCopies(job, operationList, taskList, quantity) {
   //Proof Ticket file reset quantity to 1 sheet
   if (fileName.find("-PT-") != -1) {
     Copies = Math.ceil(quantity / 250);
-  } else {
-    Copies = 1;
+  }
+  if (fileName.find("-MC-") != -1){
+    Copies = 5;
+    if (MCStyle == "complexMotionCut"){
+      Copies = 10;
+    }
   }
   //Variable job resets quanity to 1 sheet
   if (variable == "true") {
@@ -1440,7 +1444,8 @@ function loadPhoenixData(job) {
     loadJobData: loadJobData,
     loadPhoenixData: loadPhoenixData,
     getWoodshopOperation: getWoodshopOperation,
-    getMotionCutStyle: getMotionCutStyle
+    getMotionCutStyle: getMotionCutStyle,
+    sfCopies: sfCopies
   }
 
   return returnObject;
