@@ -37,6 +37,7 @@ function getJobPathFromName(job) {
   return jobPath;
 }
 
+//Find the Common Press name from Producer XML
 function getPress(job) {
   var jobData = loadJobData(job);
   var device = jobData.device;
@@ -223,11 +224,9 @@ function isSmallFold(job) {
     var xmlOperationName = operation.evalToString("./name", null);
 
     if (((xmlOperationName.find("Score") != -1) ||
-        (xmlOperationName.find("Fold") != -1)) &&
+      (xmlOperationName.find("Fold") != -1)) &&
       ((pieceWidth <= 4.5) ||
-        (pieceHeight <= 4.5)))
-
-    {
+        (pieceHeight <= 4.5))) {
       isSmallFold = true
     }
   }
@@ -498,16 +497,15 @@ function getJobQuanity(job, qty, operationList) {
   return finalQty;
 }
 
-function getSheetSize(stockName, job, operationList) {
+function getSheetSize(stockName, job) {
   var jobData = loadJobData(job);
-  var sheetSize = "";
+  var sheetSize = 'undefined'
   var shareID = jobData.shareID;
   var uhgProduct = getUHGProduct(job);
   var regex = /-?(\d+[X,x]\d+)-?/;
   var adLam = jobData.adLam;
   var fileName = jobData.fileName;
   var frontLam = jobData.frontLam;
-  var sfLamWidth = "";
   var lfGangGroup = jobData.lfGangGroup;
   var mountSub = jobData.mountSub;
   var printSub = jobData.printSub;
@@ -518,7 +516,9 @@ function getSheetSize(stockName, job, operationList) {
   if (producerSheetSize) {
     sheetSize = producerSheetSize;
     return sheetSize
-  } else if (lfGangGroup) {
+  }
+
+  if (lfGangGroup) {
     if (lfGangGroup == "UHG") {
       sheetSize = "50X100";
       if (uhgProduct == "Car Magnet") {
@@ -574,71 +574,36 @@ function getSheetSize(stockName, job, operationList) {
       }
       return sheetSize
     }
-  } else if (printSub) {
-    printSub = printSub.match(regex);
-    var printSubSize = regex.capturedTexts[1];
-    var printSubSize1 = printSubSize.split("X");
-    var printSubSizeWidth = printSubSize1[0];
-    if (fileName.find("Window") != -1) {
-      sheetSize = printSubSize;
-    } else if (frontLam) {
-      var frontLamSize = regex.capturedTexts[1];
-      sheetSize = frontLamSize;
-    } else if (mountSub) {
-      mountSub.match(regex);
-      var mountSubSize = regex.capturedTexts[1].split("X");
-      var mountSubSizeWidth = mountSubSize[0];
-      sheetWidth = Math.min(printSubSizeWidth, mountSubSizeWidth);
-      sheetSize = sheetWidth + "X119";
-      if (adLam) {
-        if (adLam == "Bronze Adhesive Lam") {
-          sheetSize = "43X119";
-        }
-        return sheetSize;
-      }
-    } else sheetSize = printSubSize;
-    return sheetSize;
   } else {
-    for (i = 0; i < operationList.length; i++) {
-      var operation = operationList.getItem(i);
-      var xmlOperationItem = operation.evalToString("./item", null);
-      var xmlOperationName = operation.evalToString("./name", null);
-      var xmlOperationChoice = operation.evalToString("./choice", null);
-      var lamResult = "";
-      var lamRegEx = /_(\d+)/g
-      var mountRegEx = /_(\d+X\d+)/g
-      if (xmlOperationName == "LF Pre-Printing Front Laminate") {
-        lamResult = xmlOperationChoice.match(lamRegEx);
-        sfLamWidth = lamResult.replace("_", "");
-        sheetSize = sfLamWidth + "X" + sheetHeight.replace(".0", "");
-        return sheetSize;
-      } else if (xmlOperationName == "LF Pre-Printing Front Laminate") {
-        lamResult = xmlOperationChoice.match(lamRegEx);
-        sfLamWidth = lamResult.replace("_", "");
-        sheetSize = sfLamWidth + "X" + sheetHeight.replace(".0", "");
-        return sheetSize;
-      } else if (xmlOperationName == "LF Front Laminating") {
-        lamResult = xmlOperationChoice.match(lamRegEx)
-        sfLamWidth = lamResult.replace("_", "");
-        sheetSize = sfLamWidth + "X" + sheetHeight.replace(".0", "");
-        return sheetSize;
-      } else if (xmlOperationName == "LF Back Laminating") {
-        lamResult = xmlOperationChoice.match(lamRegEx)
-        sfLamWidth = lamResult.replace("_", "");
-        sheetSize = sfLamWidth + "X" + sheetHeight.replace(".0", "");
-        return sheetSize;
-      } else if (xmlOperationName.find("LF Mounting") != -1) {
-        var mountSize = xmlOperationChoice.match(mountRegEx).replace("_", "");
-        var mountWidth = mountSize.split("X")[0];
-        sheetWidth = Math.min(sheetWidth.replace(".0", ""), mountWidth);
-        sheetSize = sheetWidth + "X" + sheetHeight
-        return sheetSize;
-      }
-    }
-    if (sheetSize == "") {
-      sheetSize = sheetWidth.replace(".0", "") + "X" + sheetHeight.replace(".0", "");
+    if (printSub) {
+      printSub = printSub.match(regex);
+      var printSubSize = regex.capturedTexts[1];
+      var printSubSize1 = printSubSize.split("X");
+      var printSubSizeWidth = printSubSize1[0];
+      if (fileName.find("Window") != -1) {
+        sheetSize = printSubSize;
+      } else if (frontLam) {
+        var frontLamSize = regex.capturedTexts[1];
+        sheetSize = frontLamSize;
+      } else if (mountSub) {
+        mountSub.match(regex);
+        var mountSubSize = regex.capturedTexts[1].split("X");
+        var mountSubSizeWidth = mountSubSize[0];
+        var mountSubSizeHeight = mountSubSize[1];
+        sheetWidth = Math.min(printSubSizeWidth, mountSubSizeWidth);
+        sheetSize = sheetWidth + "X119";
+        if (adLam) {
+          if (adLam == "Bronze Adhesive Lam") {
+            sheetSize = "43X119";
+          }
+          return sheetSize;
+        }
+      } else sheetSize = printSubSize;
       return sheetSize;
+    } else {
+      sheetSize = sheetWidth.replace(".0", "") + "X" + sheetHeight.replace(".0", "");
     }
+    return sheetSize;
   }
   return sheetSize;
 }
@@ -744,8 +709,7 @@ function getElaspsedTime(startTime) {
 }
 
 function getGoogleID(userName) {
-  var googleID = 'undefined';
-  var googleWebhook = '';
+  var googleID = 'undefined'
   var userKey = userName.toLowerCase().replace(' ', '');
 
 
@@ -791,7 +755,6 @@ function getGoogleID(userName) {
       break;
     case "erikotto":
       googleID = '105356723970043743228';
-      googleWebhook = 'https://chat.googleapis.com/v1/spaces/xo7kRAAAAAE/messages?key=AIzaSyDdI0hCZtE6vySjMm-WEfRq3CPzqKqqsHI&token=MBf_OOyZsz4UaOIaSTb2n0Gg8pIoofKD6bCp4pqmzmY%3D';
       break;
     case "janapederson":
       googleID = '110943842888774790056';
@@ -850,7 +813,6 @@ function getGoogleID(userName) {
 
   return googleID
 }
-
 function isBucketJob(operationList) {
   var isBucketJob = "false";
 
@@ -866,6 +828,19 @@ function isBucketJob(operationList) {
     }
   }
   return isBucketJob
+}
+
+function operationObj(operationList) {
+  var operations = {}
+
+  for (i = 0; i < operationList.length; i++) {
+    var operation = operationList.getItem(i);
+    var xmlOperationName = operation.evalToString("./name", null);
+    var xmlOperationChoice = operation.evalToString("./choice", null);
+
+    operations[xmlOperationName] = xmlOperationChoice
+  }
+  return operations
 }
 
 function getPhoenixCoverSheetMarks(job, taskList, taskListDetail) {
@@ -1094,7 +1069,6 @@ function getPhoenixCoverSheetMarks(job, taskList, taskListDetail) {
   var newMark = marks.join("\n");
   return newMark;
 }
-
 function getLamCoatType(taskList) {
   //create keys and values within object
   for (i = 0; i < taskList.length; i++) {
@@ -1111,258 +1085,6 @@ function getLamCoatType(taskList) {
     }
   }
 }
-
-function getTotalJobsForGangPWAssemble(products, job) {
-  var phoenixData = loadPhoenixData(job);
-  var jobData = loadJobData(job);
-  var fileName = jobData.fileName
-  var newLayoutNumber = 1
-  var totalJobs = 1;
-  for (i = 0; i < products.length; i++) {
-    var productName = products.getItem(i).evalToString("./name", null);
-    var layoutNumber = products.getItem(i).evalToString("./layouts/layout/@index", null);
-
-    if (productName == fileName) {
-      newLayoutNumber = layoutNumber;
-
-      var notification = new Document(job.getDataset("Phoenix Plan").getPath());
-      var layout = notification.evalToNodes("/job/layouts/layout", null);
-
-      for (j = 0; j < layout.length; j++) {
-        var layoutIndex = layout.getItem(j).evalToString("./index", null);
-
-        if (newLayoutNumber == layoutIndex) {
-          totalJobs = layout.getItem(j).evalToNumber("./product-count", null) + 1;
-        }
-      }
-    }
-  }
-  return totalJobs
-}
-
-function getLayoutNumber(products, totalVersions, job) {
-  var phoenixData = loadPhoenixData(job);
-  var jobData = loadJobData(job);
-  var fileName = jobData.fileName
-  var phoenixID = phoenixData.phoenixID
-  var newLayoutNumber = null;
-  for (i = 0; i < products.length; i++) {
-    var productName = products.getItem(i).evalToString("./name", null);
-    var layoutNumber = products.getItem(i).evalToString("./layouts/layout/@index", null);
-    var fileName = job.getNameProper();
-    if ((totalVersions > 1) && (productName.find("-Set") == -1)) {
-      fileName += " - 1";
-    }
-    if (productName.replace("-Set - 1", "") == fileName) {
-      newLayoutNumber = layoutNumber;
-    }
-    if (productName.replace("-Set", "") == fileName) {
-      newLayoutNumber = layoutNumber;
-    }
-  }
-  newLayoutNumber = parseFloat(newLayoutNumber);
-  if (newLayoutNumber < 10) {
-    newLayoutNumber = "0" + newLayoutNumber;
-  }
-  return newLayoutNumber
-}
-
-function getModeForLFGangProdLaser(job) {
-  var jobData = loadJobData(job);
-  var mode = jobData.mode;
-  var modeRetail = jobData.modeRetail;
-  var hotfolder = jobData.hotfolder;
-  if (hotfolder == "Target-Styrene-08pass-Gloss07-60x120-zcc") {
-    mode = "Gloss 07%";
-  } else if (modeRetail) {
-    mode = modeRetail;
-  } else {
-    mode = "";
-  }
-  return mode;
-}
-
-function getWoodshopOperation(job, operationList) {
-  var jobData = loadJobData(job);
-  var fileName = jobData.fileName;
-  var woodshopOperation = '';
-  //loop through the Operation Names
-  for (i = 0; i < operationList.length; i++) {
-    var operation = operationList.getItem(i);
-    var xmlOperationName = operation.evalToString("./name", null);
-    var xmlOperationChoice = operation.evalToString("./choice", null);
-    //any Operation Name that has the following is true
-    if ((xmlOperationName == "Wood Dowels") ||
-      (xmlOperationName == "TBG Canvas Frame Assembly") ||
-      (xmlOperationName == "Stretch Frame") ||
-      (xmlOperationName == "TBG Dowels")) {
-      woodshopOperation = xmlOperationName
-    }
-    //check if the Operation Choice contaions "no frame" and exclude those files
-    if ((xmlOperationChoice.find("no frame") != -1) ||
-      (fileName.find("999999") != -1)) {
-      woodshopOperation = ''
-    }
-  }
-
-  return woodshopOperation;
-}
-
-function getMotionCutStyle(job, operationList) {
-  var MCStyle = "none";
-  var jobData = loadJobData(job);
-  var press = jobData.device;
-
-  for (i = 0; i < operationList.length; i++) {
-    var operation = operationList.getItem(i);
-    var xmlOperationChoice = operation.evalToString("./choice", null);
-    var xmlOperationName = operation.evalToString("./name", null);
-
-    if ((xmlOperationName.find("Motion") != -1) ||
-      (xmlOperationName.find("Perforat") != -1) ||
-      (xmlOperationName.find("Crease") != -1) ||
-      (xmlOperationName.find("Etch") != -1) ||
-      (xmlOperationName.find("Die") != -1) ||
-      (xmlOperationName.find("Kiss-Cut") != -1) ||
-      (xmlOperationChoice.find("Motion") != -1) ||
-      (xmlOperationChoice.find("Perforat") != -1) ||
-      (xmlOperationChoice.find("Crease") != -1) ||
-      (xmlOperationChoice.find("Etch") != -1) ||
-      (xmlOperationChoice.find("Die") != -1) ||
-      (xmlOperationChoice.find("Kiss-Cut") != -1) ||
-      (press == "MC")) {
-      MCStyle = "motionCut"
-    }
-    if (xmlOperationChoice.find("ComplexDesign") != -1) {
-      MCStyle = "complexMotionCut";
-    }
-  }
-  return MCStyle;
-}
-
-function sfCopies(job, operationList, taskList, quantity) {
-  var jobData = loadJobData(job);
-  var fileName = jobData.fileName;
-  var bindingStyle = getBindingStyle(operationList);
-  var variable = jobData.variable;
-  var MCStyle = getMotionCutStyle(job, operationList);
-  var numberOfPages = jobData.filePageCount;
-  var sides = getSides(job);
-  var Copies = quantity;
-
-  //If job contains Laminating increase 5 sheets
-  for (i = 0; i < taskList.length; i++) {
-    var tasks = taskList.getItem(i);
-    var xmlTaskName = tasks.evalToString("./name", null);
-    var xmlTaskDetail = tasks.evalToString("./details/item/title", null);
-    if (xmlTaskName.find("Laminating") != -1) {
-      if (sides == 1) {
-        if (numberOfPages <= 5) {
-          Copies = Copies + Math.ceil(5 / numberOfPages);
-        } else Copies += 1;
-      }
-      if (sides == 2) {
-        if (numberOfPages <= 10) {
-          Copies = Copies + Math.ceil(5 / (numberOfPages / 2));
-        } else Copies += 1;
-      }
-
-      //Remove sheet increase on Interior pgs if Cover Only exists
-      if ((xmlTaskName.find("CoverOnly") != -1) &&
-        (fileName.find("Interior") != -1)) {
-        if (sides == 1) {
-          if (numberOfPages <= 5) {
-            Copies = Copies - Math.ceil(5 / numberOfPages);
-          } else Copies -= 1;
-        }
-        if (sides == 2) {
-          if (numberOfPages <= 10) {
-            Copies = Copies - Math.ceil(5 / (numberOfPages / 2));
-          } else Copies -= 1;
-        }
-      }
-    }
-    //If job contains Coating increase 10 sheets
-    if (xmlTaskName.find("Coating") != -1) {
-      if (sides == 1) {
-        if (numberOfPages <= 10) {
-          Copies = Copies + Math.ceil(10 / numberOfPages);
-        } else Copies += 1;
-      }
-      if (sides == 2) {
-        if (numberOfPages <= 20) {
-          Copies = Copies + Math.ceil(10 / (numberOfPages / 2));
-        } else Copies += 1;
-      }
-
-      //Remove sheet increase on Interior pgs if Cover Only exists
-      if ((xmlTaskName.find("CoverOnly") != -1) &&
-        (fileName.find("Interior") != -1)) {
-        if (sides == 1) {
-          if (numberOfPages <= 10) {
-            Copies = Copies - Math.ceil(10 / numberOfPages);
-          } else Copies -= 1;
-        }
-        if (sides == 2) {
-          if (numberOfPages <= 20) {
-            Copies = Copies - Math.ceil(10 / (numberOfPages / 2));
-          } else Copies -= 1;
-        }
-      }
-    }
-  }
-  //Motion cutting files reset quantity to 5 sheets
-  if (MCStyle == "motionCut") {
-    Copies += 5;
-  }
-  //Complex Motion cutting increases an additional 5 sheets
-  if (MCStyle == "complexMotionCut") {
-    Copies += 5;
-  }
-  //Proof Ticket file reset quantity to 1 sheet
-  if (fileName.find("-PT-") != -1) {
-    Copies = Math.ceil(quantity / 250);
-  }
-  if (fileName.find("-MC-") != -1) {
-    Copies = 5;
-    if (MCStyle == "complexMotionCut") {
-      Copies = 10;
-    }
-  }
-  //Variable job resets quanity to 1 sheet
-  if (variable == "true") {
-    Copies = 1;
-  }
-
-  return Copies;
-}
-
-function getFeatherFlagType(operationList, job) {
-  var featherFlagType = '';
-  for (i = 0; i < operationList.length; i++) {
-    var jobData = loadJobData(job);
-    var shareID = jobData.shareID;
-    var operation = operationList.getItem(i);
-    var xmlOperationChoice = operation.evalToString("./choice", null);
-    if (xmlOperationChoice == "Liner needed for Hemming") {
-      featherFlagType = "featherFlagLiner";
-    }
-    else if (xmlOperationChoice == "Feather Flag Hems (include Liner)") {
-        if ((shareID == "59591") ||
-          (shareID == "63920")) {
-          featherFlagType = "featherFlagLiner";
-        } else {
-          featherFlagType = "featherFlagTwoSides"
-        }
-      } else if ((xmlOperationChoice == "Feather Flag Hems") ||
-        (xmlOperationChoice == "Feather Flag Finishing Hem")) {
-        featherFlagType = "featherFlag";
-      }
-      job.log(2, "function featherFlagType: " + featherFlagType);
-    }
-    return featherFlagType;
-}
-
 function loadJobData(job) {
   return {
     adLam: job.getVariableAsString('[Metadata.Text:Path="/notification/order/orderItem/orderItemPrintJob/adhesiveLaminateAProductionName",Dataset="Xml",Model="XML"]'),
@@ -1374,17 +1096,11 @@ function loadJobData(job) {
     coverSide2Ink: job.getVariableAsString('[Metadata.Text:Path="/notification/order/orderItem/orderItemPrintJob/coverPressSheet/side2Ink",Dataset="Xml",Model="XML"]'),
     device: job.getVariableAsString('[Metadata.Text:Path="/notification/locationId",Dataset="Xml",Model="XML"]'),
     fileName: job.getNameProper().toUpperCase(),
-    filePageCount: job.getVariableAsNumber('[Stats.NumberOfPages]'),
-    finalHeight: job.getVariableAsNumber('[Metadata.Text:Path="/notification/order/orderItem/orderItemPrintJob/finalHeight",Dataset="Xml",Model="XML"]'),
-    finalWidth: job.getVariableAsNumber('[Metadata.Text:Path="/notification/order/orderItem/orderItemPrintJob/finalWidth",Dataset="Xml",Model="XML"]'),
     flowName: job.getVariableAsString('[Switch.FlowName]'),
     frontLam: job.getVariableAsString('[Metadata.Text:Path="/notification/order/orderItem/orderItemPrintJob/frontLaminateProductionName",Dataset="Xml",Model="XML"]'),
-    hotfolder: job.getPrivateData("hotfolder"),
     impoNumUp: job.getVariableAsNumber('[Metadata.Text:Path="pdf:Subject",Dataset="Xmp",Model="XMP"]'),
     lfGangGroup: job.getPrivateData("group"),
     lfSides: job.getVariableAsString('[Metadata.Text:Path="/notification/order/orderItem/orderItemPrintJob/sides",Dataset="Xml",Model="XML"]'),
-    mode: job.getPrivateData("mode"),
-    modeRetail: job.getVariableAsString('[Metadata.Text:Path="pdf:Author",Dataset="Xmp",Model="XMP"]'),
     mountSub: job.getVariableAsString('[Metadata.Text:Path="/notification/order/orderItem/orderItemPrintJob/mountSubstrateProductionName",Dataset="Xml",Model="XML"]'),
     nestName: job.getVariableAsString('[Metadata.Text:Path="/notification/nestName",Dataset="ComboXml",Model="XML"]'),
     paceComboNumber: job.getVariableAsString('[Metadata.Text:Path="/notification/comboJob",Dataset="ComboXml",Model="XML"]'),
@@ -1408,8 +1124,7 @@ function loadJobData(job) {
     side2Ink: job.getVariableAsString('[Metadata.Text:Path="/notification/order/orderItem/orderItemPrintJob/pressSheet/side2Ink",Dataset="Xml",Model="XML"]'),
     singleJobShipment: job.getVariableAsString('[Metadata.Text:Path="/notification/order/orderItem/singleJobShipment",Dataset="Xml",Model="XML"]'),
     siteName: job.getVariableAsString('[Metadata.Text:Path="/notification/workflow/sitename",Dataset="Xml",Model="XML"]'),
-    unGroupName: job.getPrivateData("Ungroup.JobName"),
-    variable: job.getPrivateData("variable")
+    unGroupName: job.getPrivateData("Ungroup.JobName")
   }
 }
 
@@ -1424,7 +1139,7 @@ function loadPhoenixData(job) {
   };
 }
 
-(function() {
+(function () {
   /**
    Returns an object to eval()
 
@@ -1447,9 +1162,7 @@ function loadPhoenixData(job) {
     isSmallFold: isSmallFold,
     isHardProof: isHardProof,
     getColorMode: getColorMode,
-    getLayoutNumber: getLayoutNumber,
     getStockType: getStockType,
-    getTotalJobsForGangPWAssemble: getTotalJobsForGangPWAssemble,
     getTotalVersions: getTotalVersions,
     getVariableDataType: getVariableDataType,
     getScodixType: getScodixType,
@@ -1459,19 +1172,14 @@ function loadPhoenixData(job) {
     getSheetSize: getSheetSize,
     getCustomBookletType: getCustomBookletType,
     getUHGProduct: getUHGProduct,
-    getModeForLFGangProdLaser: getModeForLFGangProdLaser,
     getNumberAcross: getNumberAcross,
     getNumberDown: getNumberDown,
     getCurrentTimeStamp: getCurrentTimeStamp,
     getGoogleID: getGoogleID,
-    getElaspsedTime: getElaspsedTime,
+    operationObj: operationObj,
     getPhoenixCoverSheetMarks: getPhoenixCoverSheetMarks,
     loadJobData: loadJobData,
-    loadPhoenixData: loadPhoenixData,
-    getWoodshopOperation: getWoodshopOperation,
-    getMotionCutStyle: getMotionCutStyle,
-    sfCopies: sfCopies,
-    getFeatherFlagType: getFeatherFlagType
+    loadPhoenixData: loadPhoenixData
   }
 
   return returnObject;
